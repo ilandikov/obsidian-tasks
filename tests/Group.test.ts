@@ -24,7 +24,7 @@ describe('Grouping tasks', () => {
 
         // Act
         const groupBy: GroupingProperty = 'path';
-        const grouping = [{ property: groupBy }];
+        const grouping = [{ property: groupBy, reversed: false }];
         const groups = Group.by(grouping, inputs);
 
         // Assert
@@ -79,7 +79,7 @@ describe('Grouping tasks', () => {
         // Arrange
         const inputs: Task[] = [];
         const group_by: GroupingProperty = 'path';
-        const grouping = [{ property: group_by }];
+        const grouping = [{ property: group_by, reversed: false }];
 
         // Act
         const groups = Group.by(grouping, inputs);
@@ -106,7 +106,7 @@ describe('Grouping tasks', () => {
         const inputs = [a, b, c];
 
         const group_by: GroupingProperty = 'path';
-        const grouping = [{ property: group_by }];
+        const grouping = [{ property: group_by, reversed: false }];
         const groups = Group.by(grouping, inputs);
         expect(groups.toString()).toMatchInlineSnapshot(`
             "
@@ -146,7 +146,7 @@ describe('Grouping tasks', () => {
         const inputs = [a, b, c];
 
         const group_by: GroupingProperty = 'tags';
-        const grouping = [{ property: group_by }];
+        const grouping = [{ property: group_by, reversed: false }];
         const groups = Group.by(grouping, inputs);
         expect(groups.toString()).toMatchInlineSnapshot(`
             "
@@ -185,7 +185,10 @@ describe('Grouping tasks', () => {
         });
         const tasks = [t1, t2, t3];
 
-        const grouping: Grouping[] = [{ property: 'folder' }, { property: 'filename' }];
+        const grouping: Grouping[] = [
+            { property: 'folder', reversed: false },
+            { property: 'filename', reversed: false },
+        ];
 
         // Act
         const groups = Group.by(grouping, tasks);

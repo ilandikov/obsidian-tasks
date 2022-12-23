@@ -26,7 +26,10 @@ export type GroupingProperty =
     | 'start'
     | 'status'
     | 'tags';
-export type Grouping = { property: GroupingProperty };
+export type Grouping = {
+    property: GroupingProperty;
+    reversed: boolean;
+};
 
 export class Query implements IQuery {
     public source: string;
@@ -39,7 +42,7 @@ export class Query implements IQuery {
     private _grouping: Grouping[] = [];
 
     private readonly groupByRegexp =
-        /^group by (backlink|done|due|filename|folder|happens|heading|path|priority|recurrence|recurring|root|scheduled|start|status|tags)/;
+        /^group by (backlink|done|due|filename|folder|happens|heading|path|priority|recurrence|recurring|root|scheduled|start|status|tags)( reverse)?/;
 
     private readonly hideOptionsRegexp =
         /^(hide|show) (task count|backlink|priority|start date|scheduled date|done date|due date|recurrence rule|edit button|urgency)/;
@@ -230,6 +233,7 @@ export class Query implements IQuery {
         if (fieldMatch !== null) {
             this._grouping.push({
                 property: fieldMatch[1] as GroupingProperty,
+                reversed: !!fieldMatch[2]
             });
         } else {
             this._error = 'do not understand query grouping';

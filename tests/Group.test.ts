@@ -222,6 +222,188 @@ describe('Grouping tasks', () => {
     });
 });
 
+describe('Grouping in reversed order', () => {
+    it('groups correctly in reversed order', () => {
+        // Arrange
+        const a = fromLine({ line: '- [ ] a', path: 'file2.md' });
+        const b = fromLine({ line: '- [ ] b', path: 'file1.md' });
+        const c = fromLine({ line: '- [ ] c', path: 'file1.md' });
+        const d = fromLine({ line: '- [ ] d', path: 'file2.md' });
+        const inputs = [a, b, c, d];
+
+        // Act
+        const groupBy: GroupingProperty = 'filename';
+        const grouping = [{ property: groupBy, reversed: true }];
+        const groups = Group.by(grouping, inputs);
+
+        // Assert
+        expect(groups.toString()).toMatchInlineSnapshot(`
+            "
+            Group names: [file2]
+            #### file2
+            - [ ] a
+            - [ ] d
+
+            ---
+
+            Group names: [file1]
+            #### file1
+            - [ ] b
+            - [ ] c
+
+            ---
+
+            4 tasks
+            "
+        `);
+    });
+    it('groups empty task list correctly', () => {
+        // Arrange
+        const inputs: Task[] = [];
+        const group_by: GroupingProperty = 'path';
+        const grouping = [{ property: group_by, reversed: false }];
+
+        // Act
+        const groups = Group.by(grouping, inputs);
+
+        // Assert
+        expect(groups.groups.length).toEqual(1);
+        expect(groups.groups[0].groups.length).toEqual(0);
+        expect(groups.groups[0].tasks.length).toEqual(0);
+    });
+
+    it('sorts group names correctly', () => {
+        const a = fromLine({
+            line: '- [ ] third file path',
+            path: 'd/e/f.md',
+        });
+        const b = fromLine({
+            line: '- [ ] second file path',
+            path: 'b/c/d.md',
+        });
+        const c = fromLine({
+            line: '- [ ] first file path, alphabetically',
+            path: 'a/b/c.md',
+        });
+        const inputs = [a, b, c];
+
+        const group_by: GroupingProperty = 'path';
+        const grouping = [{ property: group_by, reversed: false }];
+        const groups = Group.by(grouping, inputs);
+        expect(groups.toString()).toMatchInlineSnapshot(`
+            "
+            Group names: [a/b/c]
+            #### a/b/c
+            - [ ] first file path, alphabetically
+
+            ---
+
+            Group names: [b/c/d]
+            #### b/c/d
+            - [ ] second file path
+
+            ---
+
+            Group names: [d/e/f]
+            #### d/e/f
+            - [ ] third file path
+
+            ---
+
+            3 tasks
+            "
+        `);
+    });
+
+    it('handles tasks matching multiple groups correctly', () => {
+        const a = fromLine({
+            line: '- [ ] Task 1 #group1',
+        });
+        const b = fromLine({
+            line: '- [ ] Task 2 #group2 #group1',
+        });
+        const c = fromLine({
+            line: '- [ ] Task 3 #group2',
+        });
+        const inputs = [a, b, c];
+
+        const group_by: GroupingProperty = 'tags';
+        const grouping = [{ property: group_by, reversed: false }];
+        const groups = Group.by(grouping, inputs);
+        expect(groups.toString()).toMatchInlineSnapshot(`
+            "
+            Group names: [#group1]
+            #### #group1
+            - [ ] Task 1 #group1
+            - [ ] Task 2 #group2 #group1
+
+            ---
+
+            Group names: [#group2]
+            #### #group2
+            - [ ] Task 2 #group2 #group1
+            - [ ] Task 3 #group2
+
+            ---
+
+            3 tasks
+            "
+        `);
+    });
+
+    it('should create nested headings if multiple groups used', () => {
+        // Arrange
+        const t1 = fromLine({
+            line: '- [ ] Task 1 - but path is 2nd, alphabetically',
+            path: 'folder_b/folder_c/file_c.md',
+        });
+        const t2 = fromLine({
+            line: '- [ ] Task 2 - but path is 2nd, alphabetically',
+            path: 'folder_b/folder_c/file_d.md',
+        });
+        const t3 = fromLine({
+            line: '- [ ] Task 3 - but path is 1st, alphabetically',
+            path: 'folder_a/folder_b/file_c.md',
+        });
+        const tasks = [t1, t2, t3];
+
+        const grouping: Grouping[] = [
+            { property: 'folder', reversed: false },
+            { property: 'filename', reversed: false },
+        ];
+
+        // Act
+        const groups = Group.by(grouping, tasks);
+
+        // Assert
+        expect(groups.toString()).toMatchInlineSnapshot(`
+            "
+            Group names: [folder\\_a/folder\\_b/,file\\_c]
+            #### folder\\_a/folder\\_b/
+            ##### file\\_c
+            - [ ] Task 3 - but path is 1st, alphabetically
+
+            ---
+
+            Group names: [folder\\_b/folder\\_c/,file\\_c]
+            #### folder\\_b/folder\\_c/
+            ##### file\\_c
+            - [ ] Task 1 - but path is 2nd, alphabetically
+
+            ---
+
+            Group names: [folder\\_b/folder\\_c/,file\\_d]
+            ##### file\\_d
+            - [ ] Task 2 - but path is 2nd, alphabetically
+
+            ---
+
+            3 tasks
+            "
+        `);
+    });
+});
+
 describe('Group names', () => {
     type GroupNameCase = {
         groupBy: GroupingProperty;

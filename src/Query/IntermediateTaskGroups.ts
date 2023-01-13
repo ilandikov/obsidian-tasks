@@ -71,7 +71,8 @@ export class IntermediateTaskGroups {
         // the next one using the next grouping.
 
         // The root of the tree contains all the tasks.
-        const root = new TaskGroupingTreeNode(tasks);
+        // Optional for the case groupings = [].
+        const root = new TaskGroupingTreeNode(tasks, groupings[0]?.reversed);
 
         let currentTreeLevel = [root];
         for (const grouping of groupings) {
@@ -84,9 +85,17 @@ export class IntermediateTaskGroups {
                         if (child === undefined) {
                             child = new TaskGroupingTreeNode([]);
                             currentTreeNode.children.set(groupName, child);
-                            nextTreeLevel.push(child);
+                            if (!grouping.reversed) {
+                                nextTreeLevel.push(child);
+                            } else {
+                                nextTreeLevel.unshift(child);
+                            }
                         }
-                        child.values.push(task);
+                        if (!grouping.reversed) {
+                            child.values.push(task);
+                        } else {
+                            child.values.unshift(task);
+                        }
                     }
                 }
             }

@@ -8,8 +8,8 @@ export class GroupingTreeNode<T> {
     children: Map<string, GroupingTreeNode<T>> = new Map();
     values: T[] = [];
 
-    constructor(values: T[]) {
-        this.values = values;
+    constructor(values: T[], reversed: boolean = false) {
+        this.values = reversed ? values.reverse() : values;
     }
 
     /**

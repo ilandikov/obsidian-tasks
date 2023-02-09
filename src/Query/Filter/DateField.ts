@@ -25,29 +25,26 @@ export abstract class DateField extends Field {
             const date = this.date(task);
             return date !== null && !date.isValid();
         });
-        this.filterInstructions.add(`${this.fieldName()} last week`, (task: Task) => {
-            const date = this.date(task);
-            const thisPeriod = DateField.thisPeriodBoundaryDates('week');
+        ['last', 'this', 'next'].forEach((indicator) => {
+            this.filterInstructions.add(`${this.fieldName()} ${indicator} week`, (task: Task) => {
+                const date = this.date(task);
+                const thisPeriod = DateField.thisPeriodBoundaryDates('week');
 
-            thisPeriod[0].subtract(1, 'week');
-            thisPeriod[1].subtract(1, 'week');
-            
-            return date ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]) : this.filterResultIfFieldMissing();
-        });
-        this.filterInstructions.add(`${this.fieldName()} this week`, (task: Task) => {
-            const date = this.date(task);
-            const thisPeriod = DateField.thisPeriodBoundaryDates('week');
-            
-            return date ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]) : this.filterResultIfFieldMissing();
-        });
-        this.filterInstructions.add(`${this.fieldName()} next week`, (task: Task) => {
-            const date = this.date(task);
-            const thisPeriod = DateField.thisPeriodBoundaryDates('week');
+                switch (indicator) {
+                    case 'last':
+                        thisPeriod[0].subtract(1, 'week');
+                        thisPeriod[1].subtract(1, 'week');
+                        break;
+                    case 'next':
+                        thisPeriod[0].add(1, 'week');
+                        thisPeriod[1].add(1, 'week');
+                        break;
+                }
 
-            thisPeriod[0].add(1, 'week');
-            thisPeriod[1].add(1, 'week');
-
-            return date ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]) : this.filterResultIfFieldMissing();
+                return date
+                    ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1])
+                    : this.filterResultIfFieldMissing();
+            });
         });
     }
 

@@ -59,46 +59,24 @@ describe('due date', () => {
             jest.useRealTimers();
         });
 
-        it('due last week', () => {
-            const filter = new DueDateField().createFilterOrErrorMessage('due last week');
+        it.each([
+            ['last', '2022-01-02', '2022-01-03', '2022-01-09', '2022-01-10'],
+            ['this', '2022-01-09', '2022-01-10', '2022-01-16', '2022-01-17'],
+            ['next', '2022-01-16', '2022-01-17', '2022-01-23', '2022-01-24'],
+        ])(
+            'due %s week (After %s, between %s and %s, before %s)',
+            (indicator: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
+            const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} week`);
 
             // Test filter presence
             expect(filter).toBeValid();
 
             // Test filter function
             testTaskFilterForTaskWithDueDate(filter, null, false);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-02', false);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-03', true);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-09', true);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-10', false);
-        });
-
-        it('due this week', () => {
-            const filter = new DueDateField().createFilterOrErrorMessage('due this week');
-
-            // Test filter presence
-            expect(filter).toBeValid();
-
-            // Test filter function
-            testTaskFilterForTaskWithDueDate(filter, null, false);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-09', false);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-10', true);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-16', true);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-17', false);
-        });
-
-        it('due next week', () => {
-            const filter = new DueDateField().createFilterOrErrorMessage('due next week');
-
-            // Test filter presence
-            expect(filter).toBeValid();
-
-            // Test filter function
-            testTaskFilterForTaskWithDueDate(filter, null, false);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-16', false);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-17', true);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-23', true);
-            testTaskFilterForTaskWithDueDate(filter, '2022-01-24', false);
+            testTaskFilterForTaskWithDueDate(filter, dateBefore, false);
+            testTaskFilterForTaskWithDueDate(filter, dateBegin, true);
+            testTaskFilterForTaskWithDueDate(filter, dateEnd, true);
+            testTaskFilterForTaskWithDueDate(filter, dateAfter, false);
         });
     });
 });

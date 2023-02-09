@@ -27,15 +27,27 @@ export abstract class DateField extends Field {
         });
         this.filterInstructions.add(`${this.fieldName()} last week`, (task: Task) => {
             const date = this.date(task);
-            return date ? DateField.isDateInLastPeriod(date, 'week') : this.filterResultIfFieldMissing();
+            const thisPeriod = DateField.thisPeriodBoundaryDates('week');
+
+            thisPeriod[0].subtract(1, 'week');
+            thisPeriod[1].subtract(1, 'week');
+            
+            return date ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]) : this.filterResultIfFieldMissing();
         });
         this.filterInstructions.add(`${this.fieldName()} this week`, (task: Task) => {
             const date = this.date(task);
-            return date ? DateField.isDateInThisPeriod(date, 'week') : this.filterResultIfFieldMissing();
+            const thisPeriod = DateField.thisPeriodBoundaryDates('week');
+            
+            return date ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]) : this.filterResultIfFieldMissing();
         });
         this.filterInstructions.add(`${this.fieldName()} next week`, (task: Task) => {
             const date = this.date(task);
-            return date ? DateField.isDateInNextPeriod(date, 'week') : this.filterResultIfFieldMissing();
+            const thisPeriod = DateField.thisPeriodBoundaryDates('week');
+
+            thisPeriod[0].add(1, 'week');
+            thisPeriod[1].add(1, 'week');
+
+            return date ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]) : this.filterResultIfFieldMissing();
         });
     }
 
@@ -167,29 +179,5 @@ export abstract class DateField extends Field {
 
         // error case here?
         return [window.moment(), window.moment()];
-    }
-
-    public static isDateInLastPeriod(date: moment.Moment, period: string): boolean {
-        const thisPeriod = DateField.thisPeriodBoundaryDates(period);
-
-        thisPeriod[0].subtract(1, 'week');
-        thisPeriod[1].subtract(1, 'week');
-
-        return date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]);
-    }
-
-    public static isDateInThisPeriod(date: moment.Moment, period: string): boolean {
-        const thisPeriod = DateField.thisPeriodBoundaryDates(period);
-
-        return date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]);
-    }
-
-    public static isDateInNextPeriod(date: moment.Moment, period: string): boolean {
-        const thisPeriod = DateField.thisPeriodBoundaryDates(period);
-
-        thisPeriod[0].add(1, 'week');
-        thisPeriod[1].add(1, 'week');
-
-        return date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]);
     }
 }

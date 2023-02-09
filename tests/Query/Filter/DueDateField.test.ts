@@ -66,18 +66,40 @@ describe('due date', () => {
         ])(
             'due %s week (After %s, between %s and %s, before %s)',
             (indicator: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
-            const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} week`);
+                const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} week`);
 
-            // Test filter presence
-            expect(filter).toBeValid();
+                // Test filter presence
+                expect(filter).toBeValid();
 
-            // Test filter function
-            testTaskFilterForTaskWithDueDate(filter, null, false);
-            testTaskFilterForTaskWithDueDate(filter, dateBefore, false);
-            testTaskFilterForTaskWithDueDate(filter, dateBegin, true);
-            testTaskFilterForTaskWithDueDate(filter, dateEnd, true);
-            testTaskFilterForTaskWithDueDate(filter, dateAfter, false);
-        });
+                // Test filter function
+                testTaskFilterForTaskWithDueDate(filter, null, false);
+                testTaskFilterForTaskWithDueDate(filter, dateBefore, false);
+                testTaskFilterForTaskWithDueDate(filter, dateBegin, true);
+                testTaskFilterForTaskWithDueDate(filter, dateEnd, true);
+                testTaskFilterForTaskWithDueDate(filter, dateAfter, false);
+            },
+        );
+
+        it.each([
+            ['last', '2021-11-30', '2021-12-01', '2021-12-31', '2022-01-01'],
+            ['this', '2021-12-31', '2022-01-01', '2022-01-31', '2022-02-01'],
+            ['next', '2021-01-31', '2022-02-01', '2022-02-28', '2022-03-01'],
+        ])(
+            'due %s month (After %s, between %s and %s, before %s)',
+            (indicator: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
+                const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} month`);
+
+                // Test filter presence
+                expect(filter).toBeValid();
+
+                // Test filter function
+                testTaskFilterForTaskWithDueDate(filter, null, false);
+                testTaskFilterForTaskWithDueDate(filter, dateBefore, false);
+                testTaskFilterForTaskWithDueDate(filter, dateBegin, true);
+                testTaskFilterForTaskWithDueDate(filter, dateEnd, true);
+                testTaskFilterForTaskWithDueDate(filter, dateAfter, false);
+            },
+        );
     });
 });
 

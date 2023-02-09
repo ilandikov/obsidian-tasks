@@ -46,6 +46,28 @@ export abstract class DateField extends Field {
                     : this.filterResultIfFieldMissing();
             });
         });
+
+        ['last', 'this', 'next'].forEach((indicator) => {
+            this.filterInstructions.add(`${this.fieldName()} ${indicator} month`, (task: Task) => {
+                const date = this.date(task);
+                const thisPeriod = DateField.thisPeriodBoundaryDates('month');
+
+                switch (indicator) {
+                    case 'last':
+                        thisPeriod[0].subtract(1, 'month');
+                        thisPeriod[1].subtract(1, 'month');
+                        break;
+                    case 'next':
+                        thisPeriod[0].add(1, 'month');
+                        thisPeriod[1].add(1, 'month');
+                        break;
+                }
+
+                return date
+                    ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1])
+                    : this.filterResultIfFieldMissing();
+            });
+        });
     }
 
     public canCreateFilterForLine(line: string): boolean {

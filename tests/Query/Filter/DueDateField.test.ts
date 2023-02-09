@@ -6,7 +6,7 @@ import { DueDateField } from '../../../src/Query/Filter/DueDateField';
 import type { FilterOrErrorMessage } from '../../../src/Query/Filter/Filter';
 import { TaskBuilder } from '../../TestingTools/TaskBuilder';
 import { testFilter } from '../../TestingTools/FilterTestHelpers';
-import { toHaveExplanation } from '../../CustomMatchers/CustomMatchersForFilters';
+import { toBeValid, toHaveExplanation } from '../../CustomMatchers/CustomMatchersForFilters';
 import {
     expectTaskComparesAfter,
     expectTaskComparesBefore,
@@ -17,6 +17,7 @@ window.moment = moment;
 
 expect.extend({
     toHaveExplanation,
+    toBeValid,
 });
 
 function testTaskFilterForTaskWithDueDate(filter: FilterOrErrorMessage, dueDate: string | null, expected: boolean) {
@@ -46,6 +47,31 @@ describe('due date', () => {
         testTaskFilterForTaskWithDueDate(filter, '2022-02-30', true); // 30 February is not valid
         testTaskFilterForTaskWithDueDate(filter, '2022-00-01', true); // month 0 not valid
         testTaskFilterForTaskWithDueDate(filter, '2022-13-01', true); // month 13 not valid
+    });
+
+    describe('date range test', () => {
+        beforeAll(() => {
+            jest.useFakeTimers();
+            jest.setSystemTime(new Date(2022, 0, 15)); // 2022-01-15
+        });
+
+        afterAll(() => {
+            jest.useRealTimers();
+        });
+
+        it('due this week', () => {
+            const filter = new DueDateField().createFilterOrErrorMessage('due this week');
+
+            // Test filter presence
+            expect(filter).toBeValid();
+
+            // Test filter function
+            testTaskFilterForTaskWithDueDate(filter, null, false);
+            testTaskFilterForTaskWithDueDate(filter, '2022-01-09', false);
+            testTaskFilterForTaskWithDueDate(filter, '2022-01-10', true);
+            testTaskFilterForTaskWithDueDate(filter, '2022-01-16', true);
+            testTaskFilterForTaskWithDueDate(filter, '2022-01-17', false);
+        });
     });
 });
 

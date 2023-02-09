@@ -25,6 +25,10 @@ export abstract class DateField extends Field {
             const date = this.date(task);
             return date !== null && !date.isValid();
         });
+        this.filterInstructions.add(`${this.fieldName()} this week`, (task: Task) => {
+            const date = this.date(task);
+            return date ? DateField.isDateInThisPeriod(date, 'week') : this.filterResultIfFieldMissing();
+        });
     }
 
     public canCreateFilterForLine(line: string): boolean {
@@ -130,5 +134,35 @@ export abstract class DateField extends Field {
         return (a: Task, b: Task) => {
             return compareByDate(this.date(a), this.date(b));
         };
+    }
+
+    public static thisPeriodBoundaryDates(period: string): [moment.Moment, moment.Moment] {
+        switch (period) {
+            case 'week':
+                // Use locale-independant ISO 8601 weeks
+                return [window.moment().startOf('isoWeek'), window.moment().endOf('isoWeek')];
+            case 'month':
+            case 'quarter':
+            case 'year':
+                return [window.moment().startOf(period), window.moment().endOf(period)];
+            case 'half':
+                // Moment.js doesn't manage 'half a year' or 'semester' periods
+                switch (window.moment().quarter()) {
+                    case 1:
+                    case 3:
+                        return [window.moment().startOf('quarter'), window.moment().add(1, 'Q').endOf('quarter')];
+                    case 2:
+                    case 4:
+                        return [window.moment().subtract(1, 'Q').startOf('quarter'), window.moment().endOf('quarter')];
+                }
+        }
+
+        // error case here?
+        return [window.moment(), window.moment()];
+    }
+    public static isDateInThisPeriod(date: moment.Moment, period: string): boolean {
+        const thisPeriod = DateField.thisPeriodBoundaryDates(period);
+
+        return date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1]);
     }
 }

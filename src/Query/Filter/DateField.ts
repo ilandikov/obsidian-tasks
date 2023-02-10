@@ -32,7 +32,7 @@ export abstract class DateField extends Field {
             rangeIndicators.forEach((indicator) => {
                 this.filterInstructions.add(`${this.fieldName()} ${indicator} ${range}`, (task: Task) => {
                     const date = this.date(task);
-                    const [rangeStart, rangeEnd] = DateField.thisRangeBoundaryDates(range);
+                    const [rangeStart, rangeEnd] = DateField.getRangeBoundaryDates(range);
 
                     switch (indicator) {
                         case 'last':
@@ -158,7 +158,7 @@ export abstract class DateField extends Field {
         };
     }
 
-    public static thisRangeBoundaryDates(range: string): [moment.Moment, moment.Moment] {
+    public static getRangeBoundaryDates(range: string): [moment.Moment, moment.Moment] {
         switch (range) {
             case 'week':
                 // Use locale-independant ISO 8601 weeks

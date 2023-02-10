@@ -26,27 +26,27 @@ export abstract class DateField extends Field {
             return date !== null && !date.isValid();
         });
 
-        const periods = ['week', 'month'] as const;
-        const periodIndicators = ['last', 'this', 'next'] as const;
-        periods.forEach((period) => {
-            periodIndicators.forEach((indicator) => {
-                this.filterInstructions.add(`${this.fieldName()} ${indicator} ${period}`, (task: Task) => {
+        const ranges = ['week', 'month'] as const;
+        const rangeIndicators = ['last', 'this', 'next'] as const;
+        ranges.forEach((range) => {
+            rangeIndicators.forEach((indicator) => {
+                this.filterInstructions.add(`${this.fieldName()} ${indicator} ${range}`, (task: Task) => {
                     const date = this.date(task);
-                    const [periodStart, periodEnd] = DateField.thisPeriodBoundaryDates(period);
+                    const [rangeStart, rangeEnd] = DateField.thisRangeBoundaryDates(range);
 
                     switch (indicator) {
                         case 'last':
-                            periodStart.subtract(1, period);
-                            periodEnd.subtract(1, period);
+                            rangeStart.subtract(1, range);
+                            rangeEnd.subtract(1, range);
                             break;
                         case 'next':
-                            periodStart.add(1, period);
-                            periodEnd.add(1, period);
+                            rangeStart.add(1, range);
+                            rangeEnd.add(1, range);
                             break;
                     }
 
                     return date
-                        ? date.isSameOrAfter(periodStart) && date.isSameOrBefore(periodEnd)
+                        ? date.isSameOrAfter(rangeStart) && date.isSameOrBefore(rangeEnd)
                         : this.filterResultIfFieldMissing();
                 });
             });
@@ -158,17 +158,17 @@ export abstract class DateField extends Field {
         };
     }
 
-    public static thisPeriodBoundaryDates(period: string): [moment.Moment, moment.Moment] {
-        switch (period) {
+    public static thisRangeBoundaryDates(range: string): [moment.Moment, moment.Moment] {
+        switch (range) {
             case 'week':
                 // Use locale-independant ISO 8601 weeks
                 return [window.moment().startOf('isoWeek'), window.moment().endOf('isoWeek')];
             case 'month':
             case 'quarter':
             case 'year':
-                return [window.moment().startOf(period), window.moment().endOf(period)];
+                return [window.moment().startOf(range), window.moment().endOf(range)];
             case 'half':
-                // Moment.js doesn't manage 'half a year' or 'semester' periods
+                // Moment.js doesn't manage 'half a year' or 'semester' ranges
                 switch (window.moment().quarter()) {
                     case 1:
                     case 3:

@@ -26,7 +26,7 @@ export abstract class DateField extends Field {
             return date !== null && !date.isValid();
         });
 
-        const ranges = ['week', 'month'] as const;
+        const ranges = ['week', 'month', 'quarter', 'year'] as const;
         const rangeIndicators = ['last', 'this', 'next'] as const;
         ranges.forEach((range) => {
             rangeIndicators.forEach((indicator) => {

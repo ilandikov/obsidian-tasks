@@ -32,21 +32,21 @@ export abstract class DateField extends Field {
             periodIndicators.forEach((indicator) => {
                 this.filterInstructions.add(`${this.fieldName()} ${indicator} ${period}`, (task: Task) => {
                     const date = this.date(task);
-                    const thisPeriod = DateField.thisPeriodBoundaryDates(period);
+                    const [periodStart, periodEnd] = DateField.thisPeriodBoundaryDates(period);
 
                     switch (indicator) {
                         case 'last':
-                            thisPeriod[0].subtract(1, period);
-                            thisPeriod[1].subtract(1, period);
+                            periodStart.subtract(1, period);
+                            periodEnd.subtract(1, period);
                             break;
                         case 'next':
-                            thisPeriod[0].add(1, period);
-                            thisPeriod[1].add(1, period);
+                            periodStart.add(1, period);
+                            periodEnd.add(1, period);
                             break;
                     }
 
                     return date
-                        ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1])
+                        ? date.isSameOrAfter(periodStart) && date.isSameOrBefore(periodEnd)
                         : this.filterResultIfFieldMissing();
                 });
             });

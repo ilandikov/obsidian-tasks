@@ -60,13 +60,13 @@ describe('due date', () => {
         });
 
         it.each([
-            ['last', '2022-01-02', '2022-01-03', '2022-01-09', '2022-01-10'],
-            ['this', '2022-01-09', '2022-01-10', '2022-01-16', '2022-01-17'],
-            ['next', '2022-01-16', '2022-01-17', '2022-01-23', '2022-01-24'],
+            ['last', 'week', '2022-01-02', '2022-01-03', '2022-01-09', '2022-01-10'],
+            ['this', 'week', '2022-01-09', '2022-01-10', '2022-01-16', '2022-01-17'],
+            ['next', 'week', '2022-01-16', '2022-01-17', '2022-01-23', '2022-01-24'],
         ])(
-            'due %s week (After %s, between %s and %s, before %s)',
-            (indicator: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
-                const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} week`);
+            'due %s %s (After %s, between %s and %s, before %s)',
+            (indicator: string, range: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
+                const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} ${range}`);
 
                 // Test filter presence
                 expect(filter).toBeValid();
@@ -81,13 +81,13 @@ describe('due date', () => {
         );
 
         it.each([
-            ['last', '2021-11-30', '2021-12-01', '2021-12-31', '2022-01-01'],
-            ['this', '2021-12-31', '2022-01-01', '2022-01-31', '2022-02-01'],
-            ['next', '2021-01-31', '2022-02-01', '2022-02-28', '2022-03-01'],
+            ['last', 'month', '2021-11-30', '2021-12-01', '2021-12-31', '2022-01-01'],
+            ['this', 'month', '2021-12-31', '2022-01-01', '2022-01-31', '2022-02-01'],
+            ['next', 'month', '2021-01-31', '2022-02-01', '2022-02-28', '2022-03-01'],
         ])(
-            'due %s month (After %s, between %s and %s, before %s)',
-            (indicator: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
-                const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} month`);
+            'due %s %s (After %s, between %s and %s, before %s)',
+            (indicator: string, range: string, dateBefore: string, dateBegin: string, dateEnd: string, dateAfter: string) => {
+                const filter = new DueDateField().createFilterOrErrorMessage(`due ${indicator} ${range}`);
 
                 // Test filter presence
                 expect(filter).toBeValid();

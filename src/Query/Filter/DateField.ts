@@ -25,47 +25,29 @@ export abstract class DateField extends Field {
             const date = this.date(task);
             return date !== null && !date.isValid();
         });
-        ['last', 'this', 'next'].forEach((indicator) => {
-            this.filterInstructions.add(`${this.fieldName()} ${indicator} week`, (task: Task) => {
-                const date = this.date(task);
-                const thisPeriod = DateField.thisPeriodBoundaryDates('week');
 
-                switch (indicator) {
-                    case 'last':
-                        thisPeriod[0].subtract(1, 'week');
-                        thisPeriod[1].subtract(1, 'week');
-                        break;
-                    case 'next':
-                        thisPeriod[0].add(1, 'week');
-                        thisPeriod[1].add(1, 'week');
-                        break;
-                }
+        const periods = ['week', 'month'] as const;
+        periods.forEach((period) => {
+            ['last', 'this', 'next'].forEach((indicator) => {
+                this.filterInstructions.add(`${this.fieldName()} ${indicator} ${period}`, (task: Task) => {
+                    const date = this.date(task);
+                    const thisPeriod = DateField.thisPeriodBoundaryDates(period);
 
-                return date
-                    ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1])
-                    : this.filterResultIfFieldMissing();
-            });
-        });
+                    switch (indicator) {
+                        case 'last':
+                            thisPeriod[0].subtract(1, period);
+                            thisPeriod[1].subtract(1, period);
+                            break;
+                        case 'next':
+                            thisPeriod[0].add(1, period);
+                            thisPeriod[1].add(1, period);
+                            break;
+                    }
 
-        ['last', 'this', 'next'].forEach((indicator) => {
-            this.filterInstructions.add(`${this.fieldName()} ${indicator} month`, (task: Task) => {
-                const date = this.date(task);
-                const thisPeriod = DateField.thisPeriodBoundaryDates('month');
-
-                switch (indicator) {
-                    case 'last':
-                        thisPeriod[0].subtract(1, 'month');
-                        thisPeriod[1].subtract(1, 'month');
-                        break;
-                    case 'next':
-                        thisPeriod[0].add(1, 'month');
-                        thisPeriod[1].add(1, 'month');
-                        break;
-                }
-
-                return date
-                    ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1])
-                    : this.filterResultIfFieldMissing();
+                    return date
+                        ? date.isSameOrAfter(thisPeriod[0]) && date.isSameOrBefore(thisPeriod[1])
+                        : this.filterResultIfFieldMissing();
+                });
             });
         });
     }

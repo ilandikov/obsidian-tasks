@@ -27,8 +27,9 @@ export abstract class DateField extends Field {
         });
 
         const periods = ['week', 'month'] as const;
+        const periodIndicators = ['last', 'this', 'next'] as const;
         periods.forEach((period) => {
-            ['last', 'this', 'next'].forEach((indicator) => {
+            periodIndicators.forEach((indicator) => {
                 this.filterInstructions.add(`${this.fieldName()} ${indicator} ${period}`, (task: Task) => {
                     const date = this.date(task);
                     const thisPeriod = DateField.thisPeriodBoundaryDates(period);

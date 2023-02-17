@@ -105,7 +105,7 @@ describe('due date', () => {
 
     it('approval tests', () => {
         const dates = ['last week', 'this week', 'next week', '2023-02-09', '2023-02-07 2023-02-11'];
-        const keywords = ['before ', 'on ', 'after ', 'in ', ''];
+        const keywords = ['before ', 'after ', 'on ', '', 'in '];
 
         const table = new MarkdownTable(['date / keyword'].concat(dates));
 

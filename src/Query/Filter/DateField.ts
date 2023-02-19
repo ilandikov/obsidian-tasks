@@ -57,7 +57,20 @@ export abstract class DateField extends Field {
             if (!fieldDate.isValid()) {
                 result.error = 'do not understand ' + this.fieldName() + ' date';
             } else {
-                const fieldDates: [moment.Moment, moment.Moment] = [fieldDate, fieldDate];
+                let fieldDates: [moment.Moment, moment.Moment] = [fieldDate, fieldDate];
+
+                const matchedFieldDates = fieldDateString.match(/[0-9]...-[0-9].-[0-9]./g);
+                if (matchedFieldDates && matchedFieldDates.length == 2) {
+                    // The first date is already analyzed and ok
+                    const additionalFieldDate = DateParser.parseDate(matchedFieldDates[1]);
+                    if (additionalFieldDate.isValid()) {
+                        fieldDates = [fieldDate, additionalFieldDate];
+                    } else {
+                        result.error = 'do not understand ' + this.fieldName() + ' date';
+                        return result;
+                    }
+                }
+
                 const filterFunction = this.buildFilterFunction(fieldKeyword, fieldDates);
 
                 const explanation = DateField.buildExplanation(
@@ -143,7 +156,7 @@ export abstract class DateField extends Field {
                 break;
             case 'after':
                 relationship = fieldKeyword;
-                explanationDates = filterDates[0].format(dateFormat);
+                explanationDates = filterDates[1].format(dateFormat);
                 break;
             default:
                 relationship = 'on';

@@ -6,7 +6,7 @@ import { DueDateField } from '../../../src/Query/Filter/DueDateField';
 import type { FilterOrErrorMessage } from '../../../src/Query/Filter/Filter';
 import { TaskBuilder } from '../../TestingTools/TaskBuilder';
 import { testFilter } from '../../TestingTools/FilterTestHelpers';
-import { toHaveExplanation } from '../../CustomMatchers/CustomMatchersForFilters';
+import { toBeValid, toHaveExplanation } from '../../CustomMatchers/CustomMatchersForFilters';
 import {
     expectTaskComparesAfter,
     expectTaskComparesBefore,
@@ -19,6 +19,7 @@ window.moment = moment;
 
 expect.extend({
     toHaveExplanation,
+    toBeValid,
 });
 
 function testTaskFilterForTaskWithDueDate(filter: FilterOrErrorMessage, dueDate: string | null, expected: boolean) {
@@ -122,5 +123,43 @@ describe('due date', () => {
         });
 
         table.verify();
+    });
+
+    describe('date range test', () => {
+        beforeAll(() => {
+            jest.useFakeTimers();
+            jest.setSystemTime(new Date(2023, 1, 10)); // 2023-01-10
+        });
+
+        afterAll(() => {
+            jest.useRealTimers();
+        });
+
+        it.each([['after', '2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
+            '"due %s %s %s" shall contain tasks after the end of the period',
+            (
+                keyword: string,
+                rangeStart: string,
+                rangeEnd: string,
+                rangeMiddle: string,
+                beforeRange: string,
+                afterRange: string,
+            ) => {
+                const filter = new DueDateField().createFilterOrErrorMessage(
+                    `due ${keyword} ${rangeStart} ${rangeEnd}`,
+                );
+
+                // Test filter presence
+                expect(filter).toBeValid();
+
+                // Test filter function
+                testTaskFilterForTaskWithDueDate(filter, null, false);
+                testTaskFilterForTaskWithDueDate(filter, beforeRange, false);
+                testTaskFilterForTaskWithDueDate(filter, rangeStart, false);
+                testTaskFilterForTaskWithDueDate(filter, rangeMiddle, false);
+                testTaskFilterForTaskWithDueDate(filter, rangeEnd, false);
+                testTaskFilterForTaskWithDueDate(filter, afterRange, true);
+            },
+        );
     });
 });

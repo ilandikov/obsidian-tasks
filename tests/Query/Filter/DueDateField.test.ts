@@ -157,6 +157,92 @@ describe('due date', () => {
         },
     );
 
+    it.each([['on', '2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
+        'due %s range',
+        (
+            keyword: string,
+            rangeStart: string,
+            rangeEnd: string,
+            rangeMiddle: string,
+            beforeRange: string,
+            afterRange: string,
+        ) => {
+            const query = `due ${keyword} ${rangeStart} ${rangeEnd}`;
+            const filter = new DueDateField().createFilterOrErrorMessage(query);
+
+            expect(filter).toBeValid();
+
+            function testFilterFunctionToInOut(filter: FilterOrErrorMessage, taskDate: string) {
+                const task = new TaskBuilder().dueDate(taskDate).build();
+                return filter.filterFunction!(task) ? 'in' : 'out';
+            }
+
+            const strings = [query];
+            strings.push('');
+            strings.push(`Before the range (${beforeRange}) is ${testFilterFunctionToInOut(filter, beforeRange)}`);
+            strings.push(`Start of the range (${rangeStart}) is ${testFilterFunctionToInOut(filter, rangeStart)}`);
+            strings.push(`Middle of the range (${rangeMiddle}) is ${testFilterFunctionToInOut(filter, rangeMiddle)}`);
+            strings.push(`End of the range (${rangeEnd}) is ${testFilterFunctionToInOut(filter, rangeEnd)}`);
+            strings.push(`After the range (${afterRange}) is ${testFilterFunctionToInOut(filter, afterRange)}`);
+            verify(strings.join('\n'));
+        },
+    );
+
+    it.each([['in', '2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
+        'due %s range',
+        (
+            keyword: string,
+            rangeStart: string,
+            rangeEnd: string,
+            rangeMiddle: string,
+            beforeRange: string,
+            afterRange: string,
+        ) => {
+            const query = `due ${keyword} ${rangeStart} ${rangeEnd}`;
+            const filter = new DueDateField().createFilterOrErrorMessage(query);
+
+            expect(filter).toBeValid();
+
+            function testFilterFunctionToInOut(filter: FilterOrErrorMessage, taskDate: string) {
+                const task = new TaskBuilder().dueDate(taskDate).build();
+                return filter.filterFunction!(task) ? 'in' : 'out';
+            }
+
+            const strings = [query];
+            strings.push('');
+            strings.push(`Before the range (${beforeRange}) is ${testFilterFunctionToInOut(filter, beforeRange)}`);
+            strings.push(`Start of the range (${rangeStart}) is ${testFilterFunctionToInOut(filter, rangeStart)}`);
+            strings.push(`Middle of the range (${rangeMiddle}) is ${testFilterFunctionToInOut(filter, rangeMiddle)}`);
+            strings.push(`End of the range (${rangeEnd}) is ${testFilterFunctionToInOut(filter, rangeEnd)}`);
+            strings.push(`After the range (${afterRange}) is ${testFilterFunctionToInOut(filter, afterRange)}`);
+            verify(strings.join('\n'));
+        },
+    );
+
+    it.each([['2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
+        'due range',
+        (rangeStart: string, rangeEnd: string, rangeMiddle: string, beforeRange: string, afterRange: string) => {
+            const query = `due ${rangeStart} ${rangeEnd}`;
+            const filter = new DueDateField().createFilterOrErrorMessage(query);
+
+            expect(filter).toBeValid();
+
+            function testFilterFunctionToInOut(filter: FilterOrErrorMessage, taskDate: string) {
+                const task = new TaskBuilder().dueDate(taskDate).build();
+                return filter.filterFunction!(task) ? 'in' : 'out';
+            }
+
+            const strings = [query];
+            strings.push('');
+            strings.push(`Before the range (${beforeRange}) is ${testFilterFunctionToInOut(filter, beforeRange)}`);
+            strings.push(`Start of the range (${rangeStart}) is ${testFilterFunctionToInOut(filter, rangeStart)}`);
+            strings.push(`Middle of the range (${rangeMiddle}) is ${testFilterFunctionToInOut(filter, rangeMiddle)}`);
+            strings.push(`End of the range (${rangeEnd}) is ${testFilterFunctionToInOut(filter, rangeEnd)}`);
+            strings.push(`After the range (${afterRange}) is ${testFilterFunctionToInOut(filter, afterRange)}`);
+            verify(strings.join('\n'));
+        },
+    );
+
     it.each([['after', '2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
         'due %s range',
         (

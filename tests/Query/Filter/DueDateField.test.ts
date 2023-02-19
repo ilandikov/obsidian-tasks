@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import moment from 'moment';
+import { verify } from 'approvals/lib/Providers/Jest/JestApprovals';
 import { DueDateField } from '../../../src/Query/Filter/DueDateField';
 import type { FilterOrErrorMessage } from '../../../src/Query/Filter/Filter';
 import { TaskBuilder } from '../../TestingTools/TaskBuilder';
@@ -125,41 +126,34 @@ describe('due date', () => {
         table.verify();
     });
 
-    describe('date range test', () => {
-        beforeAll(() => {
-            jest.useFakeTimers();
-            jest.setSystemTime(new Date(2023, 1, 10)); // 2023-01-10
-        });
+    it.each([['after', '2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
+        'due %s range',
+        (
+            keyword: string,
+            rangeStart: string,
+            rangeEnd: string,
+            rangeMiddle: string,
+            beforeRange: string,
+            afterRange: string,
+        ) => {
+            const query = `due ${keyword} ${rangeStart} ${rangeEnd}`;
+            const filter = new DueDateField().createFilterOrErrorMessage(query);
 
-        afterAll(() => {
-            jest.useRealTimers();
-        });
+            expect(filter).toBeValid();
 
-        it.each([['after', '2023-02-07', '2023-02-11', '2023-02-10', '2023-02-06', '2023-02-12']])(
-            '"due %s %s %s" shall contain tasks after the end of the period',
-            (
-                keyword: string,
-                rangeStart: string,
-                rangeEnd: string,
-                rangeMiddle: string,
-                beforeRange: string,
-                afterRange: string,
-            ) => {
-                const filter = new DueDateField().createFilterOrErrorMessage(
-                    `due ${keyword} ${rangeStart} ${rangeEnd}`,
-                );
+            function testFilterFunctionToInOut(filter: FilterOrErrorMessage, taskDate: string) {
+                const task = new TaskBuilder().dueDate(taskDate).build();
+                return filter.filterFunction!(task) ? 'in' : 'out';
+            }
 
-                // Test filter presence
-                expect(filter).toBeValid();
-
-                // Test filter function
-                testTaskFilterForTaskWithDueDate(filter, null, false);
-                testTaskFilterForTaskWithDueDate(filter, beforeRange, false);
-                testTaskFilterForTaskWithDueDate(filter, rangeStart, false);
-                testTaskFilterForTaskWithDueDate(filter, rangeMiddle, false);
-                testTaskFilterForTaskWithDueDate(filter, rangeEnd, false);
-                testTaskFilterForTaskWithDueDate(filter, afterRange, true);
-            },
-        );
-    });
+            const strings = [query];
+            strings.push('');
+            strings.push(`Before the range (${beforeRange}) is ${testFilterFunctionToInOut(filter, beforeRange)}`);
+            strings.push(`Start of the range (${rangeStart}) is ${testFilterFunctionToInOut(filter, rangeStart)}`);
+            strings.push(`Middle of the range (${rangeMiddle}) is ${testFilterFunctionToInOut(filter, rangeMiddle)}`);
+            strings.push(`End of the range (${rangeEnd}) is ${testFilterFunctionToInOut(filter, rangeEnd)}`);
+            strings.push(`After the range (${afterRange}) is ${testFilterFunctionToInOut(filter, afterRange)}`);
+            verify(strings.join('\n'));
+        },
+    );
 });

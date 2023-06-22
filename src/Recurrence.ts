@@ -141,15 +141,15 @@ export class Recurrence {
             // least one of the other dates is set.
             if (this.referenceDate) {
                 if (this.startDate) {
-                    startDate = this.nextRecurrenceDate(this.startDate, nextReference);
+                    startDate = this.nextRecurrenceDate(this.startDate, window.moment(nextReference));
                 }
 
                 if (this.scheduledDate) {
-                    scheduledDate = this.nextRecurrenceDate(this.scheduledDate, nextReference);
+                    scheduledDate = this.nextRecurrenceDate(this.scheduledDate, window.moment(nextReference));
                 }
 
                 if (this.dueDate) {
-                    dueDate = this.nextRecurrenceDate(this.dueDate, nextReference);
+                    dueDate = this.nextRecurrenceDate(this.dueDate, window.moment(nextReference));
                 }
             }
 
@@ -163,11 +163,11 @@ export class Recurrence {
         return null;
     }
 
-    private nextRecurrenceDate(lastRecurrence: Moment, nextReference: Date): Moment {
+    private nextRecurrenceDate(lastRecurrence: Moment, nextReference: Moment): Moment {
         const fromRererenceToLastRecurrence = window.moment.duration(lastRecurrence.diff(this.referenceDate));
 
         // Cloning so that original won't be manipulated:
-        const nextRecurrence = window.moment(nextReference);
+        const nextRecurrence = nextReference;
 
         // Rounding days to handle cross daylight-savings-time recurrences.
         nextRecurrence.add(Math.round(fromRererenceToLastRecurrence.asDays()), 'days');

@@ -167,10 +167,14 @@ export class Recurrence {
         const fromRererenceToLastRecurrence = window.moment.duration(lastRecurrence.diff(this.referenceDate));
 
         // Cloning so that original won't be manipulated:
-        const nextRecurrence = nextReference;
+        let nextRecurrence = nextReference;
 
         // Rounding days to handle cross daylight-savings-time recurrences.
         nextRecurrence.add(Math.round(fromRererenceToLastRecurrence.asDays()), 'days');
+
+        while (this.baseOnToday && nextRecurrence.isBefore(window.moment())) {
+            nextRecurrence = this.nextAfter(nextRecurrence, this.rrule);
+        }
 
         return nextRecurrence;
     }

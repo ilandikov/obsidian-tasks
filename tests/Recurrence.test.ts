@@ -160,12 +160,8 @@ describe('Recurrence - test against completion dates', () => {
         const next = recurrence!.next();
 
         // Assert
-        // Today is 2023-06-22, but the next occurrence's
-        // start date & scheduled date are in the past
-        expect(next!.startDate).toEqualMoment(moment('2023-05-18'));
-        expect(next!.scheduledDate).toEqualMoment(moment('2023-06-18'));
-
-        // Because the due date takes precedence on calculating the reference date
+        expect(next!.startDate).toEqualMoment(moment('2023-06-22'));
+        expect(next!.scheduledDate).toEqualMoment(moment('2023-06-22'));
         expect(next!.dueDate).toEqualMoment(moment('2023-06-24'));
     });
 });

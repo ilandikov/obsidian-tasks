@@ -128,9 +128,9 @@ export class Recurrence {
         scheduledDate: Moment | null;
         dueDate: Moment | null;
     } | null {
-        const next = this.nextReferenceDate();
+        const nextReference = this.nextReferenceDate();
 
-        if (next !== null) {
+        if (nextReference !== null) {
             // Keep the relative difference between the reference date and
             // start/scheduled/due.
             let startDate: Moment | null = null;
@@ -141,15 +141,15 @@ export class Recurrence {
             // least one of the other dates is set.
             if (this.referenceDate) {
                 if (this.startDate) {
-                    startDate = this.nextRecurrenceDate(this.startDate, next);
+                    startDate = this.nextRecurrenceDate(this.startDate, nextReference);
                 }
 
                 if (this.scheduledDate) {
-                    scheduledDate = this.nextRecurrenceDate(this.scheduledDate, next);
+                    scheduledDate = this.nextRecurrenceDate(this.scheduledDate, nextReference);
                 }
 
                 if (this.dueDate) {
-                    dueDate = this.nextRecurrenceDate(this.dueDate, next);
+                    dueDate = this.nextRecurrenceDate(this.dueDate, nextReference);
                 }
             }
 
@@ -163,16 +163,16 @@ export class Recurrence {
         return null;
     }
 
-    private nextRecurrenceDate(lastRecurrenceDate: Moment, next: Date): Moment {
-        const originalDifference = window.moment.duration(lastRecurrenceDate.diff(this.referenceDate));
+    private nextRecurrenceDate(lastRecurrence: Moment, nextReference: Date): Moment {
+        const fromRererenceToLastRecurrence = window.moment.duration(lastRecurrence.diff(this.referenceDate));
 
         // Cloning so that original won't be manipulated:
-        const nextRecurrenceDate = window.moment(next);
+        const nextRecurrence = window.moment(nextReference);
 
         // Rounding days to handle cross daylight-savings-time recurrences.
-        nextRecurrenceDate.add(Math.round(originalDifference.asDays()), 'days');
+        nextRecurrence.add(Math.round(fromRererenceToLastRecurrence.asDays()), 'days');
 
-        return nextRecurrenceDate;
+        return nextRecurrence;
     }
 
     public identicalTo(other: Recurrence) {

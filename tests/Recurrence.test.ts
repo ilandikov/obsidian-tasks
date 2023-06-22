@@ -137,6 +137,39 @@ describe('Recurrence', () => {
     });
 });
 
+describe('Recurrence - test against completion dates', () => {
+    beforeAll(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-06-22'));
+    });
+
+    afterAll(() => {
+        jest.useRealTimers();
+    });
+
+    it('should update all the dates by difference between due and today', () => {
+        // Arrange
+        const recurrence = Recurrence.fromText({
+            recurrenceRuleText: 'every 2 days when done',
+            startDate: moment('2023-05-10').startOf('day'),
+            scheduledDate: moment('2023-06-10').startOf('day'),
+            dueDate: moment('2023-06-16').startOf('day'),
+        });
+
+        // Act
+        const next = recurrence!.next();
+
+        // Assert
+        // Today is 2023-06-22, but the next occurrence's
+        // start date & scheduled date are in the past
+        expect(next!.startDate).toEqualMoment(moment('2023-05-18'));
+        expect(next!.scheduledDate).toEqualMoment(moment('2023-06-18'));
+
+        // Because the due date takes precedence on calculating the reference date
+        expect(next!.dueDate).toEqualMoment(moment('2023-06-24'));
+    });
+});
+
 // Test cases where a task has a non-existent due, scheduled or start date.
 // Tests for invalid dates in the recurrence rules should go in a different section.
 describe('Recurrence - with invalid dates in tasks', () => {

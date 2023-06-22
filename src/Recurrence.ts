@@ -141,12 +141,7 @@ export class Recurrence {
             // least one of the other dates is set.
             if (this.referenceDate) {
                 if (this.startDate) {
-                    const originalDifference = window.moment.duration(this.startDate.diff(this.referenceDate));
-
-                    // Cloning so that original won't be manipulated:
-                    startDate = window.moment(next);
-                    // Rounding days to handle cross daylight-savings-time recurrences.
-                    startDate.add(Math.round(originalDifference.asDays()), 'days');
+                    startDate = this.nextRecurrenceDate(this.startDate, next);
                 }
                 if (this.scheduledDate) {
                     const originalDifference = window.moment.duration(this.scheduledDate.diff(this.referenceDate));
@@ -174,6 +169,18 @@ export class Recurrence {
         }
 
         return null;
+    }
+
+    private nextRecurrenceDate(lastRecurrenceDate: Moment, next: Date): Moment {
+        const originalDifference = window.moment.duration(lastRecurrenceDate.diff(this.referenceDate));
+
+        // Cloning so that original won't be manipulated:
+        const nextRecurrenceDate = window.moment(next);
+
+        // Rounding days to handle cross daylight-savings-time recurrences.
+        nextRecurrenceDate.add(Math.round(originalDifference.asDays()), 'days');
+
+        return nextRecurrenceDate;
     }
 
     public identicalTo(other: Recurrence) {

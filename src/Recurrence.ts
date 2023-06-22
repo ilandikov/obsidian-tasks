@@ -143,21 +143,13 @@ export class Recurrence {
                 if (this.startDate) {
                     startDate = this.nextRecurrenceDate(this.startDate, next);
                 }
+
                 if (this.scheduledDate) {
-                    const originalDifference = window.moment.duration(this.scheduledDate.diff(this.referenceDate));
-
-                    // Cloning so that original won't be manipulated:
-                    scheduledDate = window.moment(next);
-                    // Rounding days to handle cross daylight-savings-time recurrences.
-                    scheduledDate.add(Math.round(originalDifference.asDays()), 'days');
+                    scheduledDate = this.nextRecurrenceDate(this.scheduledDate, next);
                 }
-                if (this.dueDate) {
-                    const originalDifference = window.moment.duration(this.dueDate.diff(this.referenceDate));
 
-                    // Cloning so that original won't be manipulated:
-                    dueDate = window.moment(next);
-                    // Rounding days to handle cross daylight-savings-time recurrences.
-                    dueDate.add(Math.round(originalDifference.asDays()), 'days');
+                if (this.dueDate) {
+                    dueDate = this.nextRecurrenceDate(this.dueDate, next);
                 }
             }
 

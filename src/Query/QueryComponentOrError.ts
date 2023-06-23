@@ -1,3 +1,11 @@
+export class QueryComponent {
+    readonly instruction: string;
+
+    constructor(instruction: string) {
+        this.instruction = instruction;
+    }
+}
+
 /**
  * Generic class for storing:
  * - a text instruction.

@@ -30,33 +30,4 @@ export class QueryComponentOrError<QueryComponent> {
     public set error(value: string | undefined) {
         this._error = value;
     }
-
-    /**
-     * Construct an ObjectOrErrorMessage with the given QueryComponent.
-     *
-     * @param instruction
-     * @param object - a {@link Filter}
-     */
-    public static fromObject<QueryComponent>(
-        instruction: string,
-        object: QueryComponent,
-    ): QueryComponentOrError<QueryComponent> {
-        const result = new QueryComponentOrError<QueryComponent>(instruction);
-        result._queryComponent = object;
-        return result;
-    }
-
-    /**
-     * Construct a ObjectOrErrorMessage with the given error message.
-     * @param instruction
-     * @param errorMessage
-     */
-    public static fromError<QueryComponent>(
-        instruction: string,
-        errorMessage: string,
-    ): QueryComponentOrError<QueryComponent> {
-        const result = new QueryComponentOrError<QueryComponent>(instruction);
-        result._error = errorMessage;
-        return result;
-    }
 }

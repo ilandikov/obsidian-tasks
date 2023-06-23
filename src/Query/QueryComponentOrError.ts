@@ -14,7 +14,7 @@ export class QueryComponent {
  *
  * An example type of QueryComponent is {@link Filter}. See {@link FilterOrErrorMessage}.
  */
-export class QueryComponentOrError<T> {
+export class QueryComponentOrError<T extends QueryComponent> {
     readonly instruction: string;
     private _queryComponent: T | undefined;
     private _error: string | undefined;
@@ -45,7 +45,7 @@ export class QueryComponentOrError<T> {
      * @param instruction
      * @param object - a {@link Filter}
      */
-    public static fromObject<T>(instruction: string, object: T): QueryComponentOrError<T> {
+    public static fromObject<T extends QueryComponent>(instruction: string, object: T): QueryComponentOrError<T> {
         const result = new QueryComponentOrError<T>(instruction);
         result._queryComponent = object;
         return result;
@@ -56,7 +56,10 @@ export class QueryComponentOrError<T> {
      * @param instruction
      * @param errorMessage
      */
-    public static fromError<T>(instruction: string, errorMessage: string): QueryComponentOrError<T> {
+    public static fromError<T extends QueryComponent>(
+        instruction: string,
+        errorMessage: string,
+    ): QueryComponentOrError<T> {
         const result = new QueryComponentOrError<T>(instruction);
         result._error = errorMessage;
         return result;

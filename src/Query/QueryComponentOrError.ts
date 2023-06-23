@@ -6,20 +6,20 @@
  *
  * An example type of QueryComponent is {@link Filter}. See {@link FilterOrErrorMessage}.
  */
-export class QueryComponentOrError<QueryComponent> {
+export class QueryComponentOrError<T> {
     readonly instruction: string;
-    private _queryComponent: QueryComponent | undefined;
+    private _queryComponent: T | undefined;
     private _error: string | undefined;
 
     private constructor(instruction: string) {
         this.instruction = instruction;
     }
 
-    public get queryComponent(): QueryComponent | undefined {
+    public get queryComponent(): T | undefined {
         return this._queryComponent;
     }
 
-    private set queryComponent(value: QueryComponent | undefined) {
+    private set queryComponent(value: T | undefined) {
         this._queryComponent = value;
     }
 
@@ -37,11 +37,8 @@ export class QueryComponentOrError<QueryComponent> {
      * @param instruction
      * @param object - a {@link Filter}
      */
-    public static fromObject<QueryComponent>(
-        instruction: string,
-        object: QueryComponent,
-    ): QueryComponentOrError<QueryComponent> {
-        const result = new QueryComponentOrError<QueryComponent>(instruction);
+    public static fromObject<T>(instruction: string, object: T): QueryComponentOrError<T> {
+        const result = new QueryComponentOrError<T>(instruction);
         result._queryComponent = object;
         return result;
     }
@@ -51,11 +48,8 @@ export class QueryComponentOrError<QueryComponent> {
      * @param instruction
      * @param errorMessage
      */
-    public static fromError<QueryComponent>(
-        instruction: string,
-        errorMessage: string,
-    ): QueryComponentOrError<QueryComponent> {
-        const result = new QueryComponentOrError<QueryComponent>(instruction);
+    public static fromError<T>(instruction: string, errorMessage: string): QueryComponentOrError<T> {
+        const result = new QueryComponentOrError<T>(instruction);
         result._error = errorMessage;
         return result;
     }

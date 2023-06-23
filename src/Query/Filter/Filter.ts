@@ -1,3 +1,4 @@
+import { QueryComponent } from '../../Query/QueryComponentOrError';
 import type { Task } from '../../Task';
 import type { Explanation } from '../Explain/Explanation';
 
@@ -17,13 +18,12 @@ export type FilterFunction = (task: Task) => boolean;
  *
  * Later, the plan is to add a human-readable explanation of the filter.
  */
-export class Filter {
-    readonly instruction: string;
+export class Filter extends QueryComponent {
     readonly explanation: Explanation;
     public filterFunction: FilterFunction;
 
     public constructor(instruction: string, filterFunction: FilterFunction, explanation: Explanation) {
-        this.instruction = instruction;
+        super(instruction);
         this.explanation = explanation;
         this.filterFunction = filterFunction;
     }

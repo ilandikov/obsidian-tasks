@@ -19,7 +19,7 @@ export class QueryComponentOrError<QueryComponent> {
         return this._queryComponent;
     }
 
-    private set queryComponent(value: QueryComponent | undefined) {
+    public set queryComponent(value: QueryComponent | undefined) {
         this._queryComponent = value;
     }
 
@@ -27,7 +27,7 @@ export class QueryComponentOrError<QueryComponent> {
         return this._error;
     }
 
-    private set error(value: string | undefined) {
+    public set error(value: string | undefined) {
         this._error = value;
     }
 

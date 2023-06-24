@@ -19,7 +19,7 @@ export class QueryComponentOrError<T extends QueryComponent> {
     private _queryComponent: T | undefined;
     private _error: string | undefined;
 
-    private constructor(instruction: string) {
+    constructor(instruction: string) {
         this.instruction = instruction;
     }
 

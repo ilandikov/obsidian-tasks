@@ -14,23 +14,9 @@ import type { Filter, FilterFunction } from './Filter';
  * contained {@link Filter} will be saved, for later use in searching for Tasks
  * that match the user's filter instruction.
  */
-export class FilterOrErrorMessage {
-    public object: QueryComponentOrError<Filter>;
-
-    private constructor(object: QueryComponentOrError<Filter>) {
-        this.object = object;
-    }
-
-    public get instruction(): string {
-        return this.object.instruction;
-    }
-
+export class FilterOrErrorMessage extends QueryComponentOrError<Filter> {
     public get filter(): Filter | undefined {
-        return this.object.queryComponent;
-    }
-
-    public get error(): string | undefined {
-        return this.object.error;
+        return this.queryComponent;
     }
 
     get filterFunction(): FilterFunction | undefined {

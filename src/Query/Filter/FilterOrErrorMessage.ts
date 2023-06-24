@@ -35,7 +35,9 @@ export class FilterOrErrorMessage extends QueryComponentOrError<Filter> {
      * @param filter - a {@link Filter}
      */
     public static fromFilter(filter: Filter): FilterOrErrorMessage {
-        return new FilterOrErrorMessage(QueryComponentOrError.fromObject<Filter>(filter.instruction, filter));
+        const newFilter = new FilterOrErrorMessage(filter.instruction);
+        newFilter.queryComponent = filter;
+        return newFilter;
     }
 
     /**
@@ -44,6 +46,7 @@ export class FilterOrErrorMessage extends QueryComponentOrError<Filter> {
      * @param errorMessage
      */
     public static fromError(instruction: string, errorMessage: string): FilterOrErrorMessage {
-        return new FilterOrErrorMessage(QueryComponentOrError.fromError<Filter>(instruction, errorMessage));
+        const fromError = QueryComponentOrError.fromError<Filter>(instruction, errorMessage);
+        return fromError as FilterOrErrorMessage;
     }
 }

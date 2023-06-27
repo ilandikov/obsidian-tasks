@@ -1,4 +1,4 @@
-import type { LayoutOptions } from './TaskLayout';
+import type { HideOptions, LayoutOptions } from './TaskLayout';
 import type { Task } from './Task';
 import type { Grouper } from './Query/Grouper';
 import type { QueryResult } from './Query/QueryResult';
@@ -47,6 +47,8 @@ export interface IQuery {
      * @memberof IQuery
      */
     layoutOptions: LayoutOptions;
+
+    hideOptions: HideOptions;
 
     /**
      * Main method for executing the query. This will be called by the

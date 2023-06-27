@@ -1,4 +1,4 @@
-import { LayoutOptions } from '../TaskLayout';
+import { HideOptions, LayoutOptions } from '../TaskLayout';
 import type { Task } from '../Task';
 import type { IQuery } from '../IQuery';
 import { getSettings } from '../Config/Settings';
@@ -16,6 +16,7 @@ export class Query implements IQuery {
     private _limit: number | undefined = undefined;
     private _taskGroupLimit: number | undefined = undefined;
     private _layoutOptions: LayoutOptions = new LayoutOptions();
+    private _hideOptions: HideOptions = new HideOptions();
     private _filters: Filter[] = [];
     private _error: string | undefined = undefined;
     private _sorting: Sorter[] = [];
@@ -152,6 +153,10 @@ export class Query implements IQuery {
         return this._layoutOptions;
     }
 
+    public get hideOptions(): HideOptions {
+        return this._hideOptions;
+    }
+
     public get filters(): Filter[] {
         return this._filters;
     }
@@ -197,37 +202,37 @@ export class Query implements IQuery {
 
             switch (option) {
                 case 'task count':
-                    this._layoutOptions.hideOptions.taskCount = hide;
+                    this._hideOptions.taskCount = hide;
                     break;
                 case 'backlink':
-                    this._layoutOptions.hideOptions.backlinks = hide;
+                    this._hideOptions.backlinks = hide;
                     break;
                 case 'priority':
-                    this._layoutOptions.hideOptions.priority = hide;
+                    this._hideOptions.priority = hide;
                     break;
                 case 'created date':
-                    this._layoutOptions.hideOptions.createdDate = hide;
+                    this._hideOptions.createdDate = hide;
                     break;
                 case 'start date':
-                    this._layoutOptions.hideOptions.startDate = hide;
+                    this._hideOptions.startDate = hide;
                     break;
                 case 'scheduled date':
-                    this._layoutOptions.hideOptions.scheduledDate = hide;
+                    this._hideOptions.scheduledDate = hide;
                     break;
                 case 'due date':
-                    this._layoutOptions.hideOptions.dueDate = hide;
+                    this._hideOptions.dueDate = hide;
                     break;
                 case 'done date':
-                    this._layoutOptions.hideOptions.doneDate = hide;
+                    this._hideOptions.doneDate = hide;
                     break;
                 case 'recurrence rule':
-                    this._layoutOptions.hideOptions.recurrenceRule = hide;
+                    this._hideOptions.recurrenceRule = hide;
                     break;
                 case 'edit button':
-                    this._layoutOptions.hideOptions.editButton = hide;
+                    this._hideOptions.editButton = hide;
                     break;
                 case 'urgency':
-                    this._layoutOptions.hideOptions.urgency = hide;
+                    this._hideOptions.urgency = hide;
                     break;
                 default:
                     this._error = 'do not understand hide/show option';

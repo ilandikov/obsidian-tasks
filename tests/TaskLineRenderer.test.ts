@@ -20,7 +20,17 @@ window.moment = moment;
  * Creates a dummy 'parent element' to host a task render, renders a task inside it,
  * and returns it for inspection.
  */
-async function createMockParentAndRender(task: Task, layoutOptions?: LayoutOptions, mockTextRenderer?: TextRenderer) {
+async function createMockParentAndRender({
+    task,
+    layoutOptions = new LayoutOptions(),
+    hideOptions = new HideOptions(),
+    mockTextRenderer,
+}: {
+    task: Task;
+    layoutOptions?: LayoutOptions;
+    hideOptions?: HideOptions;
+    mockTextRenderer?: TextRenderer;
+}) {
     const parentElement = document.createElement('div');
     // Our default text renderer for this method is a simplistic flat text
     if (!mockTextRenderer)
@@ -33,6 +43,7 @@ async function createMockParentAndRender(task: Task, layoutOptions?: LayoutOptio
             parentUlElement: parentElement,
             listIndex: 0,
             layoutOptions: layoutOptions,
+            hideOptions: hideOptions,
             obsidianComponent: null,
         },
         mockTextRenderer,
@@ -74,7 +85,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const parentRender = await createMockParentAndRender(task);
+        const parentRender = await createMockParentAndRender({ task: task });
 
         // Check what we have one child, which is the rendered child
         expect(parentRender.children.length).toEqual(1);
@@ -113,7 +124,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const parentRender = await createMockParentAndRender(task);
+        const parentRender = await createMockParentAndRender({ task: task });
         return getDescriptionText(parentRender);
     };
 
@@ -137,9 +148,9 @@ describe('task line rendering', () => {
         expect(descriptionWithoutFilter).toEqual('#global/subtag-shall-stay This is a simple task with a filter');
     });
 
-    const testLayoutOptions = async (
+    const testHideOptions = async (
         taskLine: string,
-        layoutOptions: Partial<LayoutOptions>,
+        hideOptions: Partial<HideOptions>,
         expectedDescription: string,
         expectedComponents: string[],
     ) => {
@@ -148,8 +159,8 @@ describe('task line rendering', () => {
             path: 'a/b/c.d',
             precedingHeader: 'Previous Heading',
         });
-        const fullLayoutOptions = new LayoutOptions(layoutOptions);
-        const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
+        const fullHideOptions = new HideOptions(hideOptions);
+        const parentRender = await createMockParentAndRender({ task: task, hideOptions: fullHideOptions });
         const renderedDescription = getDescriptionText(parentRender);
         const renderedComponents = getOtherLayoutComponents(parentRender);
         expect(renderedDescription).toEqual(expectedDescription);
@@ -157,7 +168,7 @@ describe('task line rendering', () => {
     };
 
     it('renders correctly with the default layout options', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
             {},
             'Full task',
@@ -166,54 +177,54 @@ describe('task line rendering', () => {
     });
 
     it('renders without priority', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ priority: true }) },
+            { priority: true },
             'Full task',
             [' 🔁 every day', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
     });
 
     it('renders without created date', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 ➕ 2022-07-05 🔁 every day',
-            { hideOptions: new HideOptions({ createdDate: true }) },
+            { createdDate: true },
             'Full task',
             [' ⏫', ' 🔁 every day', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
     });
 
     it('renders without start date', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ startDate: true }) },
+            { startDate: true },
             'Full task',
             [' ⏫', ' 🔁 every day', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
     });
 
     it('renders without scheduled date', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ scheduledDate: true }) },
+            { scheduledDate: true },
             'Full task',
             [' ⏫', ' 🔁 every day', ' 🛫 2022-07-04', ' 📅 2022-07-02'],
         );
     });
 
     it('renders without due date', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ dueDate: true }) },
+            { dueDate: true },
             'Full task',
             [' ⏫', ' 🔁 every day', ' 🛫 2022-07-04', ' ⏳ 2022-07-03'],
         );
     });
 
     it('renders without recurrence rule', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ recurrenceRule: true }) },
+            { recurrenceRule: true },
             'Full task',
             [' ⏫', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
@@ -228,7 +239,7 @@ describe('task line rendering', () => {
     });
 
     it('renders a done task correctly with the default layout', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [x] Full task ✅ 2022-07-05 ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 ➕ 2022-07-05 🔁 every day',
             {},
             'Full task',
@@ -245,16 +256,16 @@ describe('task line rendering', () => {
     });
 
     it('renders a done task without the done date', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [x] Full task ✅ 2022-07-05 ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 ➕ 2022-07-05 🔁 every day',
-            { hideOptions: new HideOptions({ doneDate: true }) },
+            { doneDate: true },
             'Full task',
             [' ⏫', ' 🔁 every day', ' ➕ 2022-07-05', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
     });
 
     it('writes a placeholder message if a date is invalid', async () => {
-        await testLayoutOptions('- [ ] Task with invalid due date 📅 2023-13-02', {}, 'Task with invalid due date', [
+        await testHideOptions('- [ ] Task with invalid due date 📅 2023-13-02', {}, 'Task with invalid due date', [
             ' 📅 Invalid date',
         ]);
     });
@@ -262,7 +273,7 @@ describe('task line rendering', () => {
     it('renders debug info if requested', async () => {
         // Disable sort instructions
         updateSettings({ debugSettings: new DebugSettings(false, true) });
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Task with invalid due date 📅 2023-11-02',
             {},
             "Task with invalid due date<br>🐛 <b>0</b> . 0 . 0 . '<code>- [ ] Task with invalid due date 📅 2023-11-02</code>'<br>'<code>a/b/c.d</code>' > '<code>Previous Heading</code>'<br>",
@@ -271,7 +282,7 @@ describe('task line rendering', () => {
     });
 
     it('standardise the recurrence rule, even if the rule is invalid', async () => {
-        await testLayoutOptions(
+        await testHideOptions(
             '- [ ] Task with invalid recurrence rule 🔁 every month on the 32nd',
             {},
             'Task with invalid recurrence rule',
@@ -289,7 +300,7 @@ describe('task line rendering', () => {
             line: taskLine,
         });
         const fullLayoutOptions = new LayoutOptions(layoutOptions);
-        const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
+        const parentRender = await createMockParentAndRender({ task: task, layoutOptions: fullLayoutOptions });
 
         const textSpan = getTextSpan(parentRender);
         let found = false;
@@ -315,7 +326,7 @@ describe('task line rendering', () => {
             line: taskLine,
         });
         const fullLayoutOptions = new LayoutOptions(layoutOptions);
-        const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
+        const parentRender = await createMockParentAndRender({ task: task, layoutOptions: fullLayoutOptions });
         const li = parentRender.children[0] as HTMLElement;
         for (const key in attributes) {
             expect(li.dataset[key]).toEqual(attributes[key]);
@@ -324,15 +335,15 @@ describe('task line rendering', () => {
 
     const testHiddenComponentClasses = async (
         taskLine: string,
-        layoutOptions: Partial<LayoutOptions>,
+        hideOptions: Partial<HideOptions>,
         hiddenGenericClass: string,
         attributes: AttributesDictionary,
     ) => {
         const task = fromLine({
             line: taskLine,
         });
-        const fullLayoutOptions = new LayoutOptions(layoutOptions);
-        const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
+        const fullHideOptions = new HideOptions(hideOptions);
+        const parentRender = await createMockParentAndRender({ task: task, hideOptions: fullHideOptions });
 
         const textSpan = getTextSpan(parentRender);
         for (const childSpan of Array.from(textSpan.children)) {
@@ -496,31 +507,31 @@ describe('task line rendering', () => {
     it('does not render hidden components but sets their specific classes to the upper li element', async () => {
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ priority: true }) },
+            { priority: true },
             LayoutClasses.priority,
             { taskPriority: 'high' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 ➕ 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ createdDate: true }) },
+            { createdDate: true },
             LayoutClasses.createdDate,
             { taskCreated: 'past-far' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ dueDate: true }) },
+            { dueDate: true },
             LayoutClasses.dueDate,
             { taskDue: 'past-far' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ scheduledDate: true }) },
+            { scheduledDate: true },
             LayoutClasses.scheduledDate,
             { taskScheduled: 'past-far' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideOptions: new HideOptions({ startDate: true }) },
+            { startDate: true },
             LayoutClasses.startDate,
             { taskStart: 'past-far' },
         );
@@ -544,7 +555,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const parentRender = await createMockParentAndRender(task, new LayoutOptions(), mockInnerHtmlRenderer);
+        const parentRender = await createMockParentAndRender({ task: task, mockTextRenderer: mockInnerHtmlRenderer });
 
         const textSpan = getTextSpan(parentRender);
         const descriptionSpan = textSpan.children[0].children[0] as HTMLElement;
@@ -560,7 +571,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const parentRender = await createMockParentAndRender(task, new LayoutOptions(), mockInnerHtmlRenderer);
+        const parentRender = await createMockParentAndRender({ task: task, mockTextRenderer: mockInnerHtmlRenderer });
 
         const textSpan = getTextSpan(parentRender);
         const descriptionSpan = textSpan.children[0].children[0] as HTMLElement;

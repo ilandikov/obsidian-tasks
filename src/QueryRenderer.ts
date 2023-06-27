@@ -217,6 +217,7 @@ class QueryRenderChild extends MarkdownRenderChild {
                 parentUlElement: taskList,
                 listIndex: i,
                 layoutOptions: this.query.layoutOptions,
+                hideOptions: this.query.hideOptions,
                 isFilenameUnique,
                 taskLayout: layout,
                 obsidianComponent: this,
@@ -230,15 +231,15 @@ class QueryRenderChild extends MarkdownRenderChild {
 
             const extrasSpan = listItem.createSpan('task-extras');
 
-            if (!this.query.layoutOptions.hideOptions.urgency) {
+            if (!this.query.hideOptions.urgency) {
                 this.addUrgency(extrasSpan, task);
             }
 
-            if (!this.query.layoutOptions.hideOptions.backlinks) {
+            if (!this.query.hideOptions.backlinks) {
                 this.addBacklinks(extrasSpan, task, shortMode, isFilenameUnique);
             }
 
-            if (!this.query.layoutOptions.hideOptions.editButton) {
+            if (!this.query.hideOptions.editButton) {
                 this.addEditButton(extrasSpan, task);
             }
 
@@ -383,7 +384,7 @@ class QueryRenderChild extends MarkdownRenderChild {
     }
 
     private addTaskCount(content: HTMLDivElement, tasksCount: number) {
-        if (!this.query.layoutOptions.hideOptions.taskCount) {
+        if (!this.query.hideOptions.taskCount) {
             content.createDiv({
                 text: `${tasksCount} task${tasksCount !== 1 ? 's' : ''}`,
                 cls: 'tasks-count',

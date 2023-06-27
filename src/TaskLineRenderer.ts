@@ -2,7 +2,7 @@ import { Component, MarkdownRenderer } from 'obsidian';
 import type { Moment } from 'moment';
 import type { Task } from './Task';
 import * as taskModule from './Task';
-import type { LayoutOptions, TaskLayoutComponent } from './TaskLayout';
+import type { HideOptions, LayoutOptions, TaskLayoutComponent } from './TaskLayout';
 import { TaskLayout } from './TaskLayout';
 import { replaceTaskWithTasks } from './File';
 import { TASK_FORMATS, getSettings } from './Config/Settings';
@@ -15,6 +15,7 @@ export type TaskLineRenderDetails = {
     listIndex: number;
     obsidianComponent: Component | null;
     layoutOptions?: LayoutOptions;
+    hideOptions?: HideOptions;
     isFilenameUnique?: boolean;
     taskLayout?: TaskLayout;
 };
@@ -132,7 +133,7 @@ async function taskToHtml(
     textRenderer: TextRenderer,
 ): Promise<AttributesDictionary> {
     let allAttributes: AttributesDictionary = {};
-    const taskLayout = new TaskLayout(renderDetails.layoutOptions);
+    const taskLayout = new TaskLayout(renderDetails.layoutOptions, renderDetails.hideOptions);
     const emojiSerializer = TASK_FORMATS.tasksPluginEmoji.taskSerializer;
     // Render and build classes for all the task's visible components
     for (const component of taskLayout.layoutComponents) {

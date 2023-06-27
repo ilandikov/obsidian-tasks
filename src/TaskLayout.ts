@@ -5,7 +5,6 @@
 export class LayoutOptions {
     shortMode: boolean = false;
     explainQuery: boolean = false;
-    hideOptions: HideOptions = new HideOptions();
 
     constructor(partialOptions?: Partial<LayoutOptions>) {
         if (partialOptions) {
@@ -92,7 +91,7 @@ export class TaskLayout {
     /**
      * Return a new list of components with the given options applied.
      */
-    applyOptions(layoutOptions: LayoutOptions): TaskLayoutComponent[] {
+    applyOptions(layoutOptions: LayoutOptions, hideOptions: HideOptions): TaskLayoutComponent[] {
         // Remove a component from the taskComponents array if the given layoutOption criteria is met,
         // and add to the layout's specific classes list the class that denotes that this component
         // isn't in the layout
@@ -117,21 +116,21 @@ export class TaskLayout {
         // Remove components from the layout according to the task options. These represent the existing task options,
         // so some components (e.g. the description) are not here because there are no layout options to remove them.
         let newComponents = this.layoutComponents;
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.priority, 'priority');
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.recurrenceRule, 'recurrenceRule');
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.createdDate, 'createdDate');
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.startDate, 'startDate');
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.scheduledDate, 'scheduledDate');
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.dueDate, 'dueDate');
-        newComponents = removeIf(newComponents, layoutOptions.hideOptions.doneDate, 'doneDate');
+        newComponents = removeIf(newComponents, hideOptions.priority, 'priority');
+        newComponents = removeIf(newComponents, hideOptions.recurrenceRule, 'recurrenceRule');
+        newComponents = removeIf(newComponents, hideOptions.createdDate, 'createdDate');
+        newComponents = removeIf(newComponents, hideOptions.startDate, 'startDate');
+        newComponents = removeIf(newComponents, hideOptions.scheduledDate, 'scheduledDate');
+        newComponents = removeIf(newComponents, hideOptions.dueDate, 'dueDate');
+        newComponents = removeIf(newComponents, hideOptions.doneDate, 'doneDate');
         // The following components are handled in QueryRenderer.ts and thus are not part of the same flow that
         // hides TaskLayoutComponent items. However, we still want to have 'tasks-layout-hide' items for them
         // (see https://github.com/obsidian-tasks-group/obsidian-tasks/issues/1866).
         // This can benefit from some refactoring, i.e. render these components in a similar flow rather than
         // separately.
-        markHiddenQueryComponent(layoutOptions.hideOptions.urgency, 'urgency');
-        markHiddenQueryComponent(layoutOptions.hideOptions.backlinks, 'backlinks');
-        markHiddenQueryComponent(layoutOptions.hideOptions.editButton, 'edit-button');
+        markHiddenQueryComponent(hideOptions.urgency, 'urgency');
+        markHiddenQueryComponent(hideOptions.backlinks, 'backlinks');
+        markHiddenQueryComponent(hideOptions.editButton, 'edit-button');
         if (layoutOptions.shortMode) this.specificClasses.push('tasks-layout-short-mode');
         return newComponents;
     }

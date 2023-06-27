@@ -148,7 +148,7 @@ describe('task line rendering', () => {
             path: 'a/b/c.d',
             precedingHeader: 'Previous Heading',
         });
-        const fullLayoutOptions = { ...new LayoutOptions(), ...layoutOptions };
+        const fullLayoutOptions = new LayoutOptions(layoutOptions);
         const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
         const renderedDescription = getDescriptionText(parentRender);
         const renderedComponents = getOtherLayoutComponents(parentRender);
@@ -288,7 +288,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const fullLayoutOptions = { ...new LayoutOptions(), ...layoutOptions };
+        const fullLayoutOptions = new LayoutOptions(layoutOptions);
         const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
 
         const textSpan = getTextSpan(parentRender);
@@ -314,7 +314,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const fullLayoutOptions = { ...new LayoutOptions(), ...layoutOptions };
+        const fullLayoutOptions = new LayoutOptions(layoutOptions);
         const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
         const li = parentRender.children[0] as HTMLElement;
         for (const key in attributes) {
@@ -331,7 +331,7 @@ describe('task line rendering', () => {
         const task = fromLine({
             line: taskLine,
         });
-        const fullLayoutOptions = { ...new LayoutOptions(), ...layoutOptions };
+        const fullLayoutOptions = new LayoutOptions(layoutOptions);
         const parentRender = await createMockParentAndRender(task, fullLayoutOptions);
 
         const textSpan = getTextSpan(parentRender);

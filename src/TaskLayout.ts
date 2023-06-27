@@ -16,6 +16,12 @@ export class LayoutOptions {
     hideUrgency: boolean = true;
     shortMode: boolean = false;
     explainQuery: boolean = false;
+
+    constructor(partialOptions?: Partial<LayoutOptions>) {
+        if (partialOptions) {
+            Object.assign(this, partialOptions);
+        }
+    }
 }
 
 export type TaskLayoutComponent =

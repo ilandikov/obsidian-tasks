@@ -7,7 +7,7 @@ import type { AttributesDictionary, TextRenderer } from '../src/TaskLineRenderer
 import { DebugSettings } from '../src/Config/DebugSettings';
 import { resetSettings, updateSettings } from '../src/Config/Settings';
 import { GlobalFilter } from '../src/Config/GlobalFilter';
-import { LayoutOptions } from '../src/TaskLayout';
+import { HideOptions, LayoutOptions } from '../src/TaskLayout';
 import type { Task } from '../src/Task';
 import { TaskRegularExpressions } from '../src/Task';
 import { DateParser } from '../src/Query/DateParser';
@@ -168,7 +168,7 @@ describe('task line rendering', () => {
     it('renders without priority', async () => {
         await testLayoutOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hidePriority: true },
+            { hideOptions: new HideOptions({ hidePriority: true }) },
             'Full task',
             [' 🔁 every day', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
@@ -177,7 +177,7 @@ describe('task line rendering', () => {
     it('renders without created date', async () => {
         await testLayoutOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 ➕ 2022-07-05 🔁 every day',
-            { hideCreatedDate: true },
+            { hideOptions: new HideOptions({ hideCreatedDate: true }) },
             'Full task',
             [' ⏫', ' 🔁 every day', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
@@ -186,7 +186,7 @@ describe('task line rendering', () => {
     it('renders without start date', async () => {
         await testLayoutOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideStartDate: true },
+            { hideOptions: new HideOptions({ hideStartDate: true }) },
             'Full task',
             [' ⏫', ' 🔁 every day', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
@@ -195,7 +195,7 @@ describe('task line rendering', () => {
     it('renders without scheduled date', async () => {
         await testLayoutOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideScheduledDate: true },
+            { hideOptions: new HideOptions({ hideScheduledDate: true }) },
             'Full task',
             [' ⏫', ' 🔁 every day', ' 🛫 2022-07-04', ' 📅 2022-07-02'],
         );
@@ -204,7 +204,7 @@ describe('task line rendering', () => {
     it('renders without due date', async () => {
         await testLayoutOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideDueDate: true },
+            { hideOptions: new HideOptions({ hideDueDate: true }) },
             'Full task',
             [' ⏫', ' 🔁 every day', ' 🛫 2022-07-04', ' ⏳ 2022-07-03'],
         );
@@ -213,7 +213,7 @@ describe('task line rendering', () => {
     it('renders without recurrence rule', async () => {
         await testLayoutOptions(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideRecurrenceRule: true },
+            { hideOptions: new HideOptions({ hideRecurrenceRule: true }) },
             'Full task',
             [' ⏫', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
@@ -247,7 +247,7 @@ describe('task line rendering', () => {
     it('renders a done task without the done date', async () => {
         await testLayoutOptions(
             '- [x] Full task ✅ 2022-07-05 ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 ➕ 2022-07-05 🔁 every day',
-            { hideDoneDate: true },
+            { hideOptions: new HideOptions({ hideDoneDate: true }) },
             'Full task',
             [' ⏫', ' 🔁 every day', ' ➕ 2022-07-05', ' 🛫 2022-07-04', ' ⏳ 2022-07-03', ' 📅 2022-07-02'],
         );
@@ -496,31 +496,31 @@ describe('task line rendering', () => {
     it('does not render hidden components but sets their specific classes to the upper li element', async () => {
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hidePriority: true },
+            { hideOptions: new HideOptions({ hidePriority: true }) },
             LayoutClasses.priority,
             { taskPriority: 'high' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 ➕ 2022-07-04 🔁 every day',
-            { hideCreatedDate: true },
+            { hideOptions: new HideOptions({ hideCreatedDate: true }) },
             LayoutClasses.createdDate,
             { taskCreated: 'past-far' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideDueDate: true },
+            { hideOptions: new HideOptions({ hideDueDate: true }) },
             LayoutClasses.dueDate,
             { taskDue: 'past-far' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideScheduledDate: true },
+            { hideOptions: new HideOptions({ hideScheduledDate: true }) },
             LayoutClasses.scheduledDate,
             { taskScheduled: 'past-far' },
         );
         await testHiddenComponentClasses(
             '- [ ] Full task ⏫ 📅 2022-07-02 ⏳ 2022-07-03 🛫 2022-07-04 🔁 every day',
-            { hideStartDate: true },
+            { hideOptions: new HideOptions({ hideStartDate: true }) },
             LayoutClasses.startDate,
             { taskStart: 'past-far' },
         );

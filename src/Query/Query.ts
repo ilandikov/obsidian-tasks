@@ -197,37 +197,37 @@ export class Query implements IQuery {
 
             switch (option) {
                 case 'task count':
-                    this._layoutOptions.hideTaskCount = hide;
+                    this._layoutOptions.hideOptions.hideTaskCount = hide;
                     break;
                 case 'backlink':
-                    this._layoutOptions.hideBacklinks = hide;
+                    this._layoutOptions.hideOptions.hideBacklinks = hide;
                     break;
                 case 'priority':
-                    this._layoutOptions.hidePriority = hide;
+                    this._layoutOptions.hideOptions.hidePriority = hide;
                     break;
                 case 'created date':
-                    this._layoutOptions.hideCreatedDate = hide;
+                    this._layoutOptions.hideOptions.hideCreatedDate = hide;
                     break;
                 case 'start date':
-                    this._layoutOptions.hideStartDate = hide;
+                    this._layoutOptions.hideOptions.hideStartDate = hide;
                     break;
                 case 'scheduled date':
-                    this._layoutOptions.hideScheduledDate = hide;
+                    this._layoutOptions.hideOptions.hideScheduledDate = hide;
                     break;
                 case 'due date':
-                    this._layoutOptions.hideDueDate = hide;
+                    this._layoutOptions.hideOptions.hideDueDate = hide;
                     break;
                 case 'done date':
-                    this._layoutOptions.hideDoneDate = hide;
+                    this._layoutOptions.hideOptions.hideDoneDate = hide;
                     break;
                 case 'recurrence rule':
-                    this._layoutOptions.hideRecurrenceRule = hide;
+                    this._layoutOptions.hideOptions.hideRecurrenceRule = hide;
                     break;
                 case 'edit button':
-                    this._layoutOptions.hideEditButton = hide;
+                    this._layoutOptions.hideOptions.hideEditButton = hide;
                     break;
                 case 'urgency':
-                    this._layoutOptions.hideUrgency = hide;
+                    this._layoutOptions.hideOptions.hideUrgency = hide;
                     break;
                 default:
                     this._error = 'do not understand hide/show option';

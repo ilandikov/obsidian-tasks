@@ -65,20 +65,28 @@ export class TaskLayout {
     public layoutComponents: TaskLayoutComponent[];
     public hiddenComponents: TaskLayoutComponent[] = [];
     public options: LayoutOptions;
+    public hideOptions: HideOptions;
     public specificClasses: string[] = [];
 
-    constructor(options?: LayoutOptions, components?: TaskLayoutComponent[]) {
+    constructor(options?: LayoutOptions, hideOptions?: HideOptions, components?: TaskLayoutComponent[]) {
         if (options) {
             this.options = options;
         } else {
             this.options = new LayoutOptions();
         }
+
+        if (hideOptions) {
+            this.hideOptions = hideOptions;
+        } else {
+            this.hideOptions = new HideOptions();
+        }
+
         if (components) {
             this.layoutComponents = components;
         } else {
             this.layoutComponents = this.defaultLayout;
         }
-        this.layoutComponents = this.applyOptions(this.options);
+        this.layoutComponents = this.applyOptions(this.options, this.hideOptions);
     }
 
     /**

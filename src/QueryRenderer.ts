@@ -230,15 +230,15 @@ class QueryRenderChild extends MarkdownRenderChild {
 
             const extrasSpan = listItem.createSpan('task-extras');
 
-            if (!this.query.layoutOptions.hideOptions.hideUrgency) {
+            if (!this.query.layoutOptions.hideOptions.urgency) {
                 this.addUrgency(extrasSpan, task);
             }
 
-            if (!this.query.layoutOptions.hideOptions.hideBacklinks) {
+            if (!this.query.layoutOptions.hideOptions.backlinks) {
                 this.addBacklinks(extrasSpan, task, shortMode, isFilenameUnique);
             }
 
-            if (!this.query.layoutOptions.hideOptions.hideEditButton) {
+            if (!this.query.layoutOptions.hideOptions.editButton) {
                 this.addEditButton(extrasSpan, task);
             }
 
@@ -383,7 +383,7 @@ class QueryRenderChild extends MarkdownRenderChild {
     }
 
     private addTaskCount(content: HTMLDivElement, tasksCount: number) {
-        if (!this.query.layoutOptions.hideOptions.hideTaskCount) {
+        if (!this.query.layoutOptions.hideOptions.taskCount) {
             content.createDiv({
                 text: `${tasksCount} task${tasksCount !== 1 ? 's' : ''}`,
                 cls: 'tasks-count',

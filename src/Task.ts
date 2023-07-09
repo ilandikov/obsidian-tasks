@@ -129,7 +129,7 @@ export class Task {
 
     public readonly priority: Priority;
 
-    public readonly createdDate: Moment | null;
+    public createdDate: Moment | null;
     public readonly startDate: Moment | null;
     public readonly scheduledDate: Moment | null;
     public readonly dueDate: Moment | null;

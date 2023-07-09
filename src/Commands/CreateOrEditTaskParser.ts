@@ -27,11 +27,15 @@ export const taskFromLine = ({ line, path }: { line: string; path: string }): Ta
         DateFallback.fromPath(path), // set the scheduled date from the filename, so it can be displayed in the dialog
     );
 
+    const { setCreatedDate } = getSettings();
     if (task !== null) {
+        if (task.createdDate === null && setCreatedDate) {
+            task.createdDate = window.moment();
+        }
+
         return task;
     }
 
-    const { setCreatedDate } = getSettings();
     const createdDate = setCreatedDate ? window.moment() : null;
 
     // If we are not on a line of a task, we take what we have.

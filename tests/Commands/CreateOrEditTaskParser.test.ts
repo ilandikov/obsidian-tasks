@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Priority } from '../../src/Task';
 import { taskFromLine } from '../../src/Commands/CreateOrEditTaskParser';
 import { GlobalFilter } from '../../src/Config/GlobalFilter';
+import { resetSettings, updateSettings } from '../../src/Config/Settings';
 
 window.moment = moment;
 
@@ -74,6 +75,16 @@ describe('CreateOrEditTaskParser - testing edited task if line is saved unchange
 describe('CreateOrEditTaskParser - task recognition', () => {
     afterEach(() => {
         GlobalFilter.reset();
+        resetSettings();
+    });
+
+    beforeAll(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-07-06'));
+    });
+
+    afterAll(() => {
+        jest.useRealTimers();
     });
 
     it('should recognize task details without global filter', () => {
@@ -94,5 +105,17 @@ describe('CreateOrEditTaskParser - task recognition', () => {
         expect(task.scheduledDate).toEqualMoment(moment('2023-06-13'));
         expect(task.dueDate).toEqualMoment(moment('2024-12-10'));
         expect(task.doneDate).toEqualMoment(moment('2023-06-22'));
+    });
+
+    it('should add created to date to a task without global filter and without created date if the "Set Created Date" setting is set', () => {
+        GlobalFilter.set('#task');
+        updateSettings({ setCreatedDate: true });
+        const taskLine =
+            '- [ ] without created date and without global filter 🛫 2023-07-06 ⏳ 2023-07-10 📅 2023-07-11';
+        const path = 'a/b/c.md';
+
+        const task = taskFromLine({ line: taskLine, path });
+
+        expect(task.createdDate).toEqualMoment(window.moment('2023-07-06'));
     });
 });

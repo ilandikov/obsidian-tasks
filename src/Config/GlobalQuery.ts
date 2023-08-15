@@ -3,7 +3,7 @@ import { Query } from '../Query/Query';
 export class GlobalQuery {
     private static instance: GlobalQuery;
 
-    static empty = '';
+    private static readonly empty = '';
     private _value = GlobalQuery.empty;
 
     public static getInstance(): GlobalQuery {

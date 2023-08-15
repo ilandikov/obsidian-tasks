@@ -11,7 +11,6 @@ import { StatusSettings } from './StatusSettings';
 import { Feature } from './Feature';
 import type { FeatureFlag } from './Feature';
 import { GlobalFilter } from './GlobalFilter';
-import { GlobalQuery } from './GlobalQuery';
 
 interface SettingsMap {
     [key: string]: string | boolean;
@@ -51,7 +50,6 @@ export const TASK_FORMATS = {
 export type TASK_FORMATS = typeof TASK_FORMATS; // For convenience to make some typing easier
 
 export interface Settings {
-    globalQuery: string;
     globalFilter: string;
     removeGlobalFilter: boolean;
     taskFormat: keyof TASK_FORMATS;
@@ -81,7 +79,6 @@ export interface Settings {
 }
 
 const defaultSettings: Settings = {
-    globalQuery: GlobalQuery.empty,
     globalFilter: GlobalFilter.empty,
     removeGlobalFilter: false,
     taskFormat: 'tasksPluginEmoji',

@@ -1,40 +1,57 @@
-import type { Task } from '../Task';
+import { QueryComponentOrError } from '../Query/QueryComponentOrError';
+import { errorMessageForException } from '../lib/ExceptionTools';
+
+export class FunctionOrError extends QueryComponentOrError<Function> {}
 
 /**
- * Evaluate an arbitrary JavaScript expression on a Task object
- * @param task - a {@link Task} object
- * @param arg - a string, such as `task.path.startsWith("journal/") ? "journal/" : task.path`
+ * Parse a JavaScript expression, and return either a Function or an error message in a string.
+ * @param paramsArgs
+ * @param arg
  *
- * Currently any errors are returned as string error messages, starting with the word 'Error'.
- *
- * @todo Implement a type-safe mechanism to report error messages distinct from expression results.
- *
- * See also {@link FunctionField} which exposes this facility to users.
+ * @see evaluateExpression
+ * @see evaluateExpressionOrCatch
  */
-export function evaluateExpression(task: Task, arg: string | null) {
-    const paramsArgs: [string, any][] = [
-        // TODO Later, pass in the Query too, for access to file properties
-        ['task', task],
-    ];
-
+export function parseExpression(paramsArgs: [string, any][], arg: string): FunctionOrError {
     const params = paramsArgs.map(([p]) => p);
-    const expression = arg && new Function(...params, `return ${arg}`);
-
-    if (!(expression instanceof Function)) {
-        // I have not managed to write a test that reaches here:
-        return 'Error parsing group function';
-    }
-
-    const args = paramsArgs.map(([_, a]) => a);
-
     try {
-        return expression(...args);
-    } catch (e) {
-        const errorMessage = `Error: Failed calculating expression "${arg}". The error message was: `;
-        if (e instanceof Error) {
-            return errorMessage + e.message;
-        } else {
-            return errorMessage + 'Unknown error';
+        const input = arg.includes('return') ? arg : `return ${arg}`;
+        const expression: '' | null | Function = arg && new Function(...params, input);
+        if (expression instanceof Function) {
+            return FunctionOrError.fromObject(arg, expression);
         }
+        // I have not managed to write a test that reaches here:
+        return FunctionOrError.fromError(arg, 'Error parsing group function');
+    } catch (e) {
+        return FunctionOrError.fromError(arg, errorMessageForException(`Failed parsing expression "${arg}"`, e));
+    }
+}
+
+/**
+ * Evaluate an arbitrary JavaScript expression, throwing an exception if the calculation failed.
+ * @param expression
+ * @param paramsArgs
+ *
+ * @see parseExpression
+ * @see evaluateExpressionOrCatch
+ */
+export function evaluateExpression(expression: Function, paramsArgs: [string, any][]) {
+    const args = paramsArgs.map(([_, a]) => a);
+    return expression(...args);
+}
+
+/**
+ * Evaluate an arbitrary JavaScript expression, returning an error message if the calculation failed.
+ * @param expression
+ * @param paramsArgs
+ * @param arg
+ *
+ * @see parseExpression
+ * @see evaluateExpression
+ */
+export function evaluateExpressionOrCatch(expression: Function, paramsArgs: [string, any][], arg: string) {
+    try {
+        return evaluateExpression(expression, paramsArgs);
+    } catch (e) {
+        return errorMessageForException(`Failed calculating expression "${arg}"`, e);
     }
 }

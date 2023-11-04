@@ -1,5 +1,7 @@
 import { Options } from 'approvals/lib/Core/Options';
 import { verify } from 'approvals/lib/Providers/Jest/JestApprovals';
+import type { GlobalFilter } from '../../src/Config/GlobalFilter';
+import type { GlobalQuery } from '../../src/Config/GlobalQuery';
 import { Query } from '../../src/Query/Query';
 import { explainResults } from '../../src/lib/QueryRendererHelper';
 
@@ -26,7 +28,20 @@ export function verifyAll<T1>(func: (i: T1) => any, params1: T1[]) {
 }
 
 /**
- * Save an instructions block to disc, so that it can be embedded in
+ Save text to disk, so that it can be embedded in
+ to documentation, using a 'snippet' line.
+ * @param text
+ * @param extensionWithoutDot, such as 'text' or 'explanation.text'. Needed to override the Approvals default of 'txt'.
+ * @param options
+ */
+export function verifyWithFileExtension(text: string, extensionWithoutDot: string, options?: Options): void {
+    options = options || new Options();
+    options = options.forFile().withFileExtention(extensionWithoutDot);
+    verify(text, options);
+}
+
+/**
+ * Save an instructions block to disk, so that it can be embedded in
  * to documentation, using a 'snippet' line.
  * @todo Figure out how to include the '```tasks' and '```' lines:
  *       see discussion in https://github.com/SimonCropp/MarkdownSnippets/issues/537
@@ -34,9 +49,7 @@ export function verifyAll<T1>(func: (i: T1) => any, params1: T1[]) {
  * @param options
  */
 export function verifyQuery(instructions: string, options?: Options): void {
-    options = options || new Options();
-    options = options.forFile().withFileExtention('query.text');
-    verify(instructions, options);
+    verifyWithFileExtension(instructions, 'query.text', options);
 }
 
 /**
@@ -51,14 +64,12 @@ export function verifyQuery(instructions: string, options?: Options): void {
  * @param options
  */
 export function verifyQueryExplanation(instructions: string, options?: Options): void {
-    const query = new Query({ source: instructions });
+    const query = new Query(instructions);
     const explanation = query.explainQuery();
 
     expect(query.error).toBeUndefined();
 
-    options = options || new Options();
-    options = options.forFile().withFileExtention('explanation.text');
-    verify(explanation, options);
+    verifyWithFileExtension(explanation, 'explanation.text', options);
 }
 
 /**
@@ -70,12 +81,17 @@ export function verifyQueryExplanation(instructions: string, options?: Options):
  * See {@link verifyQueryExplanation} to just explain the query.
  *
  * @param instructions
- * @param options
+ * @param globalFilter
+ * @param globalQuery
+ * @param options?
  */
-export function verifyTaskBlockExplanation(instructions: string, options?: Options): void {
-    const explanation = explainResults(instructions);
+export function verifyTaskBlockExplanation(
+    instructions: string,
+    globalFilter: GlobalFilter,
+    globalQuery: GlobalQuery,
+    options?: Options,
+): void {
+    const explanation = explainResults(instructions, globalFilter, globalQuery, 'some/sample/file path.md');
 
-    options = options || new Options();
-    options = options.forFile().withFileExtention('explanation.text');
-    verify(explanation, options);
+    verifyWithFileExtension(explanation, 'explanation.text', options);
 }

@@ -4,6 +4,7 @@ import type { PostfixExpression } from 'boon-js';
 import { parseFilter } from '../FilterParser';
 import type { Task } from '../../Task';
 import { Explanation } from '../Explain/Explanation';
+import type { SearchInfo } from '../SearchInfo';
 import { Field } from './Field';
 import { FilterOrErrorMessage } from './FilterOrErrorMessage';
 import { Filter } from './Filter';
@@ -13,7 +14,7 @@ import { Filter } from './Filter';
  * the format --
  *    (filter1) AND ((filter2) OR (filter3))
  * The filters can be mixed and matched with any boolean operators as long as the individual filters are
- * wrapped in either paranthesis or quotes -- (filter1) or "filter1".
+ * wrapped in either parenthesis or quotes -- (filter1) or "filter1".
  * What happens internally is that when the boolean field is asked to create a filter, it parses the boolean
  * query into a logical postfix expression (https://en.wikipedia.org/wiki/Reverse_Polish_notation),
  * with the individual filter components as "identifier" tokens.
@@ -94,8 +95,8 @@ export class BooleanField extends Field {
                 }
             }
             // Return the filter with filter function that can run the complete query
-            const filterFunction = (task: Task) => {
-                return this.filterTaskWithParsedQuery(task, postfixExpression);
+            const filterFunction = (task: Task, searchInfo: SearchInfo) => {
+                return this.filterTaskWithParsedQuery(task, postfixExpression, searchInfo);
             };
             const explanation = this.constructExplanation(postfixExpression);
             return FilterOrErrorMessage.fromFilter(new Filter(line, filterFunction, explanation));
@@ -122,7 +123,11 @@ export class BooleanField extends Field {
      * See here how it works: http://www.btechsmartclass.com/data_structures/postfix-evaluation.html
      * Another reference: https://www.tutorialspoint.com/Evaluate-Postfix-Expression
      */
-    private filterTaskWithParsedQuery(task: Task, postfixExpression: PostfixExpression): boolean {
+    private filterTaskWithParsedQuery(
+        task: Task,
+        postfixExpression: PostfixExpression,
+        searchInfo: SearchInfo,
+    ): boolean {
         const toBool = (s: string | undefined) => {
             return s === 'true';
         };
@@ -137,7 +142,7 @@ export class BooleanField extends Field {
                 // task for each identifier that we find in the postfix expression.
                 if (token.value == null) throw Error('null token value'); // This should not happen
                 const filter = this.subFields[token.value.trim()];
-                const result = filter.filterFunction(task);
+                const result = filter.filterFunction(task, searchInfo);
                 booleanStack.push(toString(result));
             } else if (token.name === 'OPERATOR') {
                 // To evaluate an operator we need to pop the required number of items from the boolean stack,
@@ -203,7 +208,7 @@ export class BooleanField extends Field {
                     throw Error('Unsupported operator: ' + token.value);
                 }
             } else {
-                throw Error('Unsupported token type: ' + token);
+                throw Error('Unsupported token type: ' + token.name);
             }
         }
         // Eventually the Explanation is the only item left in the boolean stack

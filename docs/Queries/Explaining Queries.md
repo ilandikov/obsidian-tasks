@@ -57,6 +57,31 @@ Note how it shows the dates being searched for very clearly, including the day o
 
 It also shows that `starts` searches also match tasks with not start date.
 
+### Regular Expressions are explained
+
+> [!released]
+> Introduced in Tasks 4.3.0.
+
+For example, when the following [[Regular Expressions|regular expression]] is placed in a tasks query block:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_regular_expression.approved.query.text -->
+```text
+explain
+path regex matches /^Root/Sub-Folder/Sample File\.md/i
+```
+<!-- endSnippet -->
+
+the results begin with the following:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_regular_expression.approved.explanation.text -->
+```text
+Explanation of this Tasks code block query:
+
+path regex matches /^Root/Sub-Folder/Sample File\.md/i =>
+  using regex:     '^Root\/Sub-Folder\/Sample File\.md' with flag 'i'
+```
+<!-- endSnippet -->
+
 ### Boolean combinations are displayed
 
 For example, when the following text is placed in a tasks query block:
@@ -86,14 +111,21 @@ not done
 
 ### More complex combinations are displayed
 
-With complex Boolean combinations of filters, it is easy to get parentheses in the wrong place. With `explain`, the interpreted logic is easily visible.
+With complex Boolean combinations of filters, it is easy to get parentheses in the wrong place, even when using [[Line Continuations]] to improve readability.
+
+With `explain`, the interpreted logic is easily visible.
 
 For example, when the following text is placed in a tasks query block:
 
 <!-- snippet: DocsSamplesForExplain.test.explain_nested_boolean_combinations.approved.query.text -->
 ```text
 explain
-( (description includes 1) AND (description includes 2) AND (description includes 3) ) OR ( (description includes 5) AND (description includes 6) AND (description includes 7) ) AND NOT (description includes 7)
+(                                                                                       \
+    (description includes 1) AND (description includes 2) AND (description includes 3)  \
+) OR (                                                                                  \
+    (description includes 5) AND (description includes 6) AND (description includes 7)  \
+)                                                                                       \
+AND NOT (description includes 7)
 ```
 <!-- endSnippet -->
 
@@ -116,6 +148,89 @@ Explanation of this Tasks code block query:
         description includes 7
       NOT:
         description includes 7
+```
+<!-- endSnippet -->
+
+### Global Query is displayed
+
+> [!released]
+The Global Query setting was added in Tasks 3.5.0.
+
+For example, with this [[Global Query|global query]]:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_example_global_query.approved.query.text -->
+```text
+limit 50
+heading includes tasks
+```
+<!-- endSnippet -->
+
+and when the following text is placed in a tasks query block:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_explains_task_block_with_global_query_active.approved.query.text -->
+```text
+not done
+due next week
+explain
+```
+<!-- endSnippet -->
+
+the results begin with the following, on `2022-10-21`:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_explains_task_block_with_global_query_active.approved.explanation.text -->
+```text
+Explanation of the global query:
+
+heading includes tasks
+
+
+At most 50 tasks.
+
+Explanation of this Tasks code block query:
+
+not done
+
+due next week =>
+  due date is between:
+    2022-10-24 (Monday 24th October 2022) and
+    2022-10-30 (Sunday 30th October 2022) inclusive
+```
+<!-- endSnippet -->
+
+### Placeholder values are expanded
+
+> [!released]
+> Placeholders were introduced in Tasks 4.7.0.
+
+For example, when the following query with [[Query Properties]] in [[Placeholders|placeholders]] is placed in a tasks query block in the file `some/sample/file path.md`:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_placeholders.approved.query.text -->
+```text
+explain
+path includes {{query.file.path}}
+root includes {{query.file.root}}
+folder includes {{query.file.folder}}
+filename includes {{query.file.filename}}
+
+description includes Some Cryptic String {{! Inline comments are removed before search }}
+```
+<!-- endSnippet -->
+
+the results begin with the following:
+
+<!-- snippet: DocsSamplesForExplain.test.explain_placeholders.approved.explanation.text -->
+```text
+Explanation of this Tasks code block query:
+
+path includes some/sample/file path.md
+
+root includes some/
+
+folder includes some/sample/
+
+filename includes file path.md
+
+description includes Some Cryptic String
 ```
 <!-- endSnippet -->
 

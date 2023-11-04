@@ -11,8 +11,6 @@ Please understand that Tasks is mostly maintained by a single person in their fr
 
 Please follow the steps in this page **fully** when reporting a bug, to save your time and ours. Thank you.
 
----
-
 ## Before reporting a bug
 
 > [!important]
@@ -38,13 +36,20 @@ Please follow the steps in this page **fully** when reporting a bug, to save you
   - Confirm that you can reproduce the problem there.
   - Make a note of every individual step you needed to do, to reproduce the problem.
 
----
-
 ## Report the bug
 
 There is a [form to guide you through submitting a bug report](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/new/choose).
 
 The rest of this section guides you through giving enough information for the bug to be investigated.
+
+> [!warning] Warning: Issues created with GitHub's 'Reference in new issue' will be closed with no action
+> Occasionally we receive bug reports or feature requests that were created via GitHub's '[Reference in new issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue#creating-an-issue-from-a-comment)' facility.
+>
+> Because they by-pass the Issue template mechanism, these do not have the information that we need to be able to act on requests.
+>
+> We no longer have the time to go back and forth asking for the information manually that the templates request.
+>
+> Please do not be offended when issues created via 'Reference in new issue' are just closed. It's nothing personal.
 
 ### Give us text to copy
 
@@ -157,8 +162,6 @@ This is the level of detail required for a developer to be able to reproduce a b
 >           - The task contains `⏳ 2023-01-13`
 > 8. Repeat the editing steps above in **Live Preview** mode
 >     - The same thing happens: the edited date is not applied to the task line
-
----
 
 ## Bug involving another plugin
 

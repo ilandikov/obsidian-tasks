@@ -217,6 +217,9 @@
             if (!recurrenceFromText) {
                 parsedRecurrence = '<i>invalid recurrence rule</i>';
                 isRecurrenceValid = false;
+            } else if (!editableTask.startDate && !editableTask.scheduledDate && !editableTask.dueDate) {
+                parsedRecurrence = '<i>due, scheduled or start date required</i>';
+                isRecurrenceValid = false;
             } else {
                 parsedRecurrence = recurrenceFromText;
             }
@@ -231,11 +234,11 @@
     onMount(() => {
         const { provideAccessKeys } = getSettings();
         withAccessKeys = provideAccessKeys;
-        const description = GlobalFilter.removeAsWordFrom(task.description);
+        const description = GlobalFilter.getInstance().removeAsWordFrom(task.description);
         // If we're displaying to the user the description without the global filter (i.e. it was removed in the method
         // above), or if the description did not include a global filter in the first place, we'll add the global filter
         // when saving the task.
-        if (description != task.description || !GlobalFilter.includedIn(task.description)) {
+        if (description != task.description || !GlobalFilter.getInstance().includedIn(task.description)) {
             addGlobalFilterOnSave = true;
         }
         let priority: typeof editableTask.priority = 'none';
@@ -299,7 +302,7 @@
     const _onSubmit = () => {
         let description = editableTask.description.trim();
         if (addGlobalFilterOnSave) {
-            description = GlobalFilter.prependTo(description);
+            description = GlobalFilter.getInstance().prependTo(description);
         }
 
         const startDate = parseTypedDateForSaving(editableTask.startDate);
@@ -371,7 +374,6 @@
                 bind:value={editableTask.description}
                 bind:this={descriptionInput}
                 id="description"
-                type="text"
                 class="tasks-modal-description"
                 placeholder="Take out the trash"
                 accesskey={accesskey("t")}

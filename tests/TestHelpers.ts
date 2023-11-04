@@ -22,6 +22,18 @@ export function fromLine({
     })!;
 }
 
+export function fromLines({
+    lines,
+    path = '',
+    precedingHeader = null,
+}: {
+    lines: string[];
+    path?: string;
+    precedingHeader?: string | null;
+}): Task[] {
+    return lines.map((line) => fromLine({ line, path, precedingHeader }));
+}
+
 export function createTasksFromMarkdown(tasksAsMarkdown: string, path: string, precedingHeader: string): Task[] {
     const taskLines = tasksAsMarkdown.split('\n');
     const tasks: Task[] = [];
@@ -63,14 +75,14 @@ export class SampleTasks {
             // Months
             'every 4 months on the 3rd Wednesday',
             'every month',
-            'every second of month',
-            'every second of month when done',
+            'every month on the 2nd',
+            'every month on the 2nd when done',
 
             // Weeks
             'every Tuesday',
             'every Tuesday when done',
             'every week',
-            'every 3rd Thursday',
+            'every 3 weeks on Thursday',
             'every 4 weeks',
 
             // Days
@@ -100,6 +112,7 @@ export class SampleTasks {
             ['', 'heading'],
 
             // no heading supplied
+            ['a/b.md', null],
             ['a/b/c.md', null],
 
             // File and heading, nominal case
@@ -121,7 +134,7 @@ export class SampleTasks {
         const t = '- [ ] xyz';
 
         return allPathsAndHeadings.map(([path, heading]) => {
-            return fromLine({ line: t, path: path, precedingHeader: heading });
+            return fromLine({ line: t + ' in ' + path, path: path, precedingHeader: heading });
         });
     }
 
@@ -165,7 +178,7 @@ export class SampleTasks {
         ];
 
         return statuses.map((status) => {
-            return new TaskBuilder().status(status).build();
+            return new TaskBuilder().status(status).description(`Status ${status.name}`).build();
         });
     }
 

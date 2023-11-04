@@ -7,6 +7,14 @@ expect.extend({
 });
 
 // ---------------------------------------------------------------------
+// CustomMatchersForExpressions
+// ---------------------------------------------------------------------
+import { toEvaluateAs } from './CustomMatchersForExpressions';
+expect.extend({
+    toEvaluateAs,
+});
+
+// ---------------------------------------------------------------------
 // CustomMatchersForFilters
 // ---------------------------------------------------------------------
 import {
@@ -14,8 +22,10 @@ import {
     toHaveExplanation,
     toMatchTask,
     toMatchTaskFromLine,
+    toMatchTaskWithDescription,
     toMatchTaskWithHeading,
     toMatchTaskWithPath,
+    toMatchTaskWithSearchInfo,
     toMatchTaskWithStatus,
 } from './CustomMatchersForFilters';
 expect.extend({
@@ -23,8 +33,10 @@ expect.extend({
     toHaveExplanation,
     toMatchTask,
     toMatchTaskFromLine,
+    toMatchTaskWithDescription,
     toMatchTaskWithHeading,
     toMatchTaskWithPath,
+    toMatchTaskWithSearchInfo,
     toMatchTaskWithStatus,
 });
 

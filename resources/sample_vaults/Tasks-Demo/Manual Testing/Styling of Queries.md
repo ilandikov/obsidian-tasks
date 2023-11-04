@@ -10,10 +10,11 @@ To test styling of queries, follow these steps, viewing this file either in **Re
 
 - [ ] **1. Open the Obsidian settings of the Demo vault and under Appearance | CSS Snippets, turn on `tasks-plugin-smoke-test-query-styling`.**
 
-- [ ] **2.** **Test 'group by' classes** - the following query result should have **red headings** named 'Priority 1: High' and 'Priority 4: Low'.
+- [ ] **2.** **Test 'group by' classes** - the following query result should have **red headings** named 'High priority' and 'Low priority'.
 
 ```tasks
 path includes Styling of Queries
+description includes priority
 group by priority
 ```
 
@@ -21,6 +22,7 @@ group by priority
 
 ```tasks
 path includes Styling of Queries
+description includes priority
 group by due
 ```
 
@@ -28,6 +30,7 @@ group by due
 
 ```tasks
 path includes Styling of Queries
+description includes priority
 short mode
 ```
 
@@ -35,15 +38,42 @@ short mode
 
 ```tasks
 path includes Styling of Queries
+description includes priority
 hide priority
 hide backlinks
 hide urgency
 hide edit button
 ```
 
-- [ ] 6. Open the Obsidian settings of the Demo vault and under Appearance | CSS Snippets, turn **off** `tasks-plugin-smoke-test-query-styling`.
+- [ ] **6. Test the colouring by tag presence** - this should:
+  - **show** the task's tag `#todo/strategic`:
+  - **show** the description in red
+  - **show** the tag in the group heading
+
+```tasks
+path includes Styling of Queries
+description includes tag
+group by tags
+hide backlink
+```
+
+- [ ] **7. Test the colouring by tag presence when tags are hidden** - this should:
+  - **hide** the task's tag `#todo/strategic`
+  - **still show** the description in red
+  - **still show** the tag in the group heading
+
+```tasks
+path includes Styling of Queries
+description includes tag
+group by tags
+hide tags
+hide backlink
+```
+
+- [ ] **8. Open the Obsidian settings** of the Demo vault and under Appearance | CSS Snippets, turn **off** `tasks-plugin-smoke-test-query-styling`.
 
 ## Tasks for Reference
 
 - [ ] #task Task with high priority ⏫
 - [ ] #task Task with low priority 🔽
+- [ ] #task I have a tag to make my description red #todo/strategic

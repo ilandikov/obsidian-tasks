@@ -1,18 +1,35 @@
-import { evaluateExpression } from '../../Scripting/Expression';
 import type { Task } from '../../Task';
 import type { GrouperFunction } from '../Grouper';
 import { Grouper } from '../Grouper';
+import { Explanation } from '../Explain/Explanation';
+import { TaskExpression, parseAndEvaluateExpression } from '../../Scripting/TaskExpression';
+import type { QueryContext } from '../../Scripting/QueryContext';
+import type { SearchInfo } from '../SearchInfo';
 import { Field } from './Field';
+import { Filter, type FilterFunction } from './Filter';
 import { FilterOrErrorMessage } from './FilterOrErrorMessage';
 
 /**
- * A {@link Field} implement that accepts a JavaSscript expression to group tasks together.
+ * A {@link Field} implement that accepts a JavaScript expression to filter or group tasks.
  *
- * See also {@link evaluateExpression}
+ * See also {@link parseAndEvaluateExpression}
  */
 export class FunctionField extends Field {
     createFilterOrErrorMessage(line: string): FilterOrErrorMessage {
-        return FilterOrErrorMessage.fromError(line, 'Searching by custom function not yet implemented');
+        const match = Field.getMatch(this.filterRegExp(), line);
+        if (match === null) {
+            return FilterOrErrorMessage.fromError(line, 'Unable to parse line');
+        }
+
+        const expression = match[1];
+        const taskExpression = new TaskExpression(expression);
+        if (!taskExpression.isValid()) {
+            return FilterOrErrorMessage.fromError(line, taskExpression.parseError!);
+        }
+
+        return FilterOrErrorMessage.fromFilter(
+            new Filter(line, createFilterFunctionFromLine(taskExpression), new Explanation(line)),
+        );
     }
 
     fieldName(): string {
@@ -20,7 +37,7 @@ export class FunctionField extends Field {
     }
 
     protected filterRegExp(): RegExp | null {
-        return null;
+        return new RegExp(`^filter by ${this.fieldNameSingularEscaped()} (.*)`);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -57,17 +74,47 @@ export class FunctionField extends Field {
     }
 }
 
-type GroupingArg = string;
+// -----------------------------------------------------------------------------------------------------------------
+// Filtering
+// -----------------------------------------------------------------------------------------------------------------
 
-function createGrouperFunctionFromLine(line: string): GrouperFunction {
-    return (task: Task) => {
-        return groupByFunction(task, line);
+function createFilterFunctionFromLine(expression: TaskExpression): FilterFunction {
+    return (task: Task, searchInfo: SearchInfo) => {
+        const queryContext = searchInfo.queryContext();
+        return filterByFunction(expression, task, queryContext);
     };
 }
 
-export function groupByFunction(task: Task, arg: GroupingArg): string[] {
+export function filterByFunction(expression: TaskExpression, task: Task, queryContext?: QueryContext): boolean {
+    // Allow exceptions to propagate to caller, since this will be called in a tight loop.
+    // In searches, it will be caught by Query.applyQueryToTasks().
+    const result = expression.evaluate(task, queryContext);
+
+    // We insist that 'filter by function' returns booleans,
+    // to avoid users having to understand truthy and falsey values.
+    if (typeof result === 'boolean') {
+        return result;
+    }
+
+    throw Error(`filtering function must return true or false. This returned "${result}".`);
+}
+
+// -----------------------------------------------------------------------------------------------------------------
+// Grouping
+// -----------------------------------------------------------------------------------------------------------------
+
+type GroupingArg = string;
+
+function createGrouperFunctionFromLine(line: string): GrouperFunction {
+    return (task: Task, searchInfo: SearchInfo) => {
+        const queryContext = searchInfo.queryContext();
+        return groupByFunction(task, line, queryContext);
+    };
+}
+
+export function groupByFunction(task: Task, arg: GroupingArg, queryContext?: QueryContext): string[] {
     try {
-        const result = evaluateExpression(task, arg);
+        const result = parseAndEvaluateExpression(task, arg, queryContext);
 
         if (Array.isArray(result)) {
             return result.map((h) => h.toString());

@@ -132,6 +132,7 @@ These attributes can be used to style tasks according to their status, with the 
   - Reading mode,
   - Tasks query blocks in Reading and Live Preview modes.
 - Styles **cannot access any automatic scheduled date** that is created if the [[Use Filename as Default Date]]  option is enabled.
+  - We are tracking this in [issue #1947](https://github.com/obsidian-tasks-group/obsidian-tasks/issues/1947).
 
 ## More Classes
 
@@ -586,8 +587,6 @@ li.task-list-item ul.has-list-bullet {
 For example:
 
 ![Example of tasks-plugin-complete-example.css snippet](../../images/tasks-plugin-complete-example-snippet.png)
-
----
 
 ## Appendix: Fixing CSS pre-existing snippets for Tasks 3.0.0
 

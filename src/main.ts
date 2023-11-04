@@ -2,6 +2,7 @@ import { Plugin } from 'obsidian';
 
 import { Cache } from './Cache';
 import { Commands } from './Commands';
+import { GlobalQuery } from './Config/GlobalQuery';
 import { TasksEvents } from './TasksEvents';
 import { initializeFile } from './File';
 import { InlineRenderer } from './InlineRenderer';
@@ -10,11 +11,12 @@ import { QueryRenderer } from './QueryRenderer';
 import { getSettings, updateSettings } from './Config/Settings';
 import { SettingsTab } from './Config/SettingsTab';
 import { StatusRegistry } from './StatusRegistry';
-import { logging } from './lib/logging';
+import { log, logging } from './lib/logging';
 import { EditorSuggestor } from './Suggestor/EditorSuggestorPopup';
 import { StatusSettings } from './Config/StatusSettings';
 import type { Task } from './Task';
 import { tasksApiV1 } from './Api';
+import { GlobalFilter } from './Config/GlobalFilter';
 
 export default class TasksPlugin extends Plugin {
     private cache: Cache | undefined;
@@ -27,9 +29,14 @@ export default class TasksPlugin extends Plugin {
 
     async onload() {
         logging.registerConsoleLogger();
-        console.log('loading plugin "tasks"');
+        log('info', `loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
         await this.loadSettings();
+
+        // Configure logging.
+        const { loggingOptions } = getSettings();
+        logging.configure(loggingOptions);
+
         this.addSettingTab(new SettingsTab({ plugin: this }));
 
         initializeFile({
@@ -61,13 +68,21 @@ export default class TasksPlugin extends Plugin {
     }
 
     onunload() {
-        console.log('unloading plugin "tasks"');
+        log('info', `unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
         this.cache?.unload();
     }
 
     async loadSettings() {
-        const newSettings = await this.loadData();
+        let newSettings = await this.loadData();
         updateSettings(newSettings);
+
+        // Fetch the updated settings, in case the user has not yet edited the settings,
+        // in which case newSettings is currently empty.
+        newSettings = getSettings();
+        GlobalFilter.getInstance().set(newSettings.globalFilter);
+        GlobalFilter.getInstance().setRemoveGlobalFilter(newSettings.removeGlobalFilter);
+        GlobalQuery.getInstance().set(newSettings.globalQuery);
+
         await this.loadTaskStatuses();
     }
 

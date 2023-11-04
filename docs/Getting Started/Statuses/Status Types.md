@@ -36,6 +36,8 @@ The `DONE` type is used to determine:
 - whether to add or remove the Done date when toggling a task.
 - whether to create new instances of recurring tasks, when they are done.
 
+The page [[Recurring Tasks and Custom Statuses]] has several worked examples to explain the above points fully.
+
 ### CANCELLED
 
 This is typically used for tasks that you originally thought needed to be done, but have since discovered are not needed for some reason.
@@ -47,6 +49,11 @@ Previously, the only option in Tasks for these was to mark them as DONE, but thi
 Custom checkbox styles are often used for non-task concepts, such as 'Pro' and 'Con' lists.
 
 You may wish to assign this type to some of your statuses, to allow you to write filters to exclude them from your task searches.
+
+When you click on checkboxes for `NON_TASK` statuses, the task line will:
+
+- never acquire a Done date
+- never create a new instance, even if the task line has a [[Recurring Tasks|recurrence rule]].
 
 ## Status Types-related instructions
 
@@ -80,7 +87,7 @@ Each column shows a representative example task with the given status type.
 
 The tasks shown are purely examples for context. The `~` column is just an arbitrary example to show `NON_TASK`'s behaviour'. You can assign each of these types to any of your custom statuses.
 
-<!-- placeholder to force blank line before included text --> <!-- include: DocsSamplesForStatuses.test.Status_Transitions_status-types.approved.md -->
+<!-- placeholder to force blank line before included text --><!-- include: DocsSamplesForStatuses.test.Status_Transitions_status-types.approved.md -->
 
 | Operation and status.type | TODO | IN_PROGRESS | DONE | CANCELLED | NON_TASK |
 | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -100,4 +107,4 @@ The tasks shown are purely examples for context. The `~` column is just an arbit
 | Name for `group by status.type` | %%2%%TODO | %%1%%IN_PROGRESS | %%3%%DONE | %%4%%CANCELLED | %%5%%NON_TASK |
 | Name for `group by status.name` | Todo | In Progress | Done | Cancelled | My custom status |
 
-<!-- placeholder to force blank line after included text --> <!-- endInclude -->
+<!-- placeholder to force blank line after included text --><!-- endInclude -->

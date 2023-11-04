@@ -79,8 +79,7 @@ function testToggleLineForOutOfRangeCursorPositions(
 
 describe('ToggleDone', () => {
     afterEach(() => {
-        GlobalFilter.reset();
-        updateSettings({ autoInsertGlobalFilter: false });
+        GlobalFilter.getInstance().reset();
     });
 
     const todaySpy = jest.spyOn(Date, 'now').mockReturnValue(moment('2022-09-04').valueOf());
@@ -95,7 +94,7 @@ describe('ToggleDone', () => {
         testToggleLine('|', '- |');
         testToggleLine('foo|bar', '- foobar|');
 
-        GlobalFilter.set('#task');
+        GlobalFilter.getInstance().set('#task');
 
         testToggleLine('|', '- |');
         testToggleLine('foo|bar', '- foobar|');
@@ -103,7 +102,7 @@ describe('ToggleDone', () => {
 
     describe('should add checkbox to hyphen and space', () => {
         it('if autoInsertGlobalFilter is false, then an empty global filter is not added', () => {
-            GlobalFilter.set('');
+            GlobalFilter.getInstance().set('');
             updateSettings({ autoInsertGlobalFilter: false });
 
             testToggleLine('|- ', '- [ ] |');
@@ -112,7 +111,7 @@ describe('ToggleDone', () => {
         });
 
         it('if autoInsertGlobalFilter is true, then and empty global filter is not added', () => {
-            GlobalFilter.set('');
+            GlobalFilter.getInstance().set('');
             updateSettings({ autoInsertGlobalFilter: true });
 
             testToggleLine('|- ', '- [ ] |');
@@ -121,7 +120,7 @@ describe('ToggleDone', () => {
         });
 
         it('if autoInsertGlobalFilter is false, then a tag global filter is not added', () => {
-            GlobalFilter.set('#task');
+            GlobalFilter.getInstance().set('#task');
             updateSettings({ autoInsertGlobalFilter: false });
 
             testToggleLine('|- ', '- [ ] |');
@@ -132,7 +131,7 @@ describe('ToggleDone', () => {
         });
 
         it('if autoInsertGlobalFilter is true, then a tag global filter is added if absent', () => {
-            GlobalFilter.set('#task');
+            GlobalFilter.getInstance().set('#task');
             updateSettings({ autoInsertGlobalFilter: true });
 
             testToggleLine('|- ', '- [ ] #task |');
@@ -143,7 +142,7 @@ describe('ToggleDone', () => {
         });
 
         it('if autoInsertGlobalFilter is false, then a non-tag global filter is not added', () => {
-            GlobalFilter.set('TODO');
+            GlobalFilter.getInstance().set('TODO');
             updateSettings({ autoInsertGlobalFilter: false });
 
             testToggleLine('|- ', '- [ ] |');
@@ -154,7 +153,7 @@ describe('ToggleDone', () => {
         });
 
         it('if autoInsertGlobalFilter is true, then a non-tag global filter is added if absent', () => {
-            GlobalFilter.set('TODO');
+            GlobalFilter.getInstance().set('TODO');
             updateSettings({ autoInsertGlobalFilter: true });
 
             testToggleLine('|- ', '- [ ] TODO |');
@@ -167,13 +166,13 @@ describe('ToggleDone', () => {
         it('regex global filter is not broken', () => {
             // Test a global filter that has special characters from regular expressions
             // if autoInsertGlobalFilter is false, then global filter is not added
-            GlobalFilter.set('a.*b');
+            GlobalFilter.getInstance().set('a.*b');
             updateSettings({ autoInsertGlobalFilter: false });
 
             testToggleLine('|- [ ] a.*b ', '|- [x] a.*b ✅ 2022-09-04');
             testToggleLine('- [ ] a.*b foobar |', '- [x] a.*b foobar |✅ 2022-09-04');
 
-            GlobalFilter.set('a.*b');
+            GlobalFilter.getInstance().set('a.*b');
             updateSettings({ autoInsertGlobalFilter: true });
 
             testToggleLine('|- [ ] a.*b ', '|- [x] a.*b ✅ 2022-09-04');
@@ -192,7 +191,7 @@ describe('ToggleDone', () => {
         });
 
         it('when completing a task with a tag global filter', () => {
-            GlobalFilter.set('#task');
+            GlobalFilter.getInstance().set('#task');
 
             const completesWithTaskGlobalFilter = () => {
                 testToggleLine('|- [ ] ', '|- [x] ');
@@ -212,7 +211,7 @@ describe('ToggleDone', () => {
         });
 
         it('when completing a task with a non-tag global filter', () => {
-            GlobalFilter.set('TODO');
+            GlobalFilter.getInstance().set('TODO');
 
             const completesWithTodoGlobalFilter = () => {
                 testToggleLine('|- [ ] ', '|- [x] ');
@@ -230,7 +229,7 @@ describe('ToggleDone', () => {
 
         it('when completing a task with a regex global filter', () => {
             // Test a global filter that has special characters from regular expressions
-            GlobalFilter.set('a.*b');
+            GlobalFilter.getInstance().set('a.*b');
 
             const completesWithRegexGlobalFilter = () => {
                 testToggleLine('|- [ ] ', '|- [x] ');
@@ -254,7 +253,7 @@ describe('ToggleDone', () => {
         // Issue #449 - cursor jumped 13 characters to the left on un-completion
         testToggleLine('- [x] I have a proper description| ✅ 2022-09-04', '- [ ] I have a proper description|');
 
-        GlobalFilter.set('#task');
+        GlobalFilter.getInstance().set('#task');
 
         // Done date is not removed if task does not match global filter
         testToggleLine('|- [x]  ✅ 2022-09-04', '|- [ ] ✅ 2022-09-04');
@@ -282,7 +281,7 @@ describe('ToggleDone', () => {
 - [x] I am a recurring task| 🔁 every day 📅 2022-09-04 ✅ 2022-09-04`,
         );
 
-        GlobalFilter.set('#task');
+        GlobalFilter.getInstance().set('#task');
 
         // Tasks do not recur, and no done-date added, if not matching global filter
         testToggleLine(
@@ -300,7 +299,7 @@ describe('ToggleDone', () => {
 
     describe('should honour next status character', () => {
         afterEach(() => {
-            GlobalFilter.reset();
+            GlobalFilter.getInstance().reset();
         });
 
         // Arrange
@@ -321,7 +320,7 @@ describe('ToggleDone', () => {
         });
 
         it('when there is a global filter and task with global filter is toggled', () => {
-            GlobalFilter.set('#task');
+            GlobalFilter.getInstance().set('#task');
 
             const line1 = '- [C] #task this is a task starting at Con';
 
@@ -334,7 +333,7 @@ describe('ToggleDone', () => {
         });
 
         it('when there is a global filter and task without global filter is toggled', () => {
-            GlobalFilter.set('#task');
+            GlobalFilter.getInstance().set('#task');
 
             const line1 = '- [P] this is a task starting at Pro, not matching the global filter';
 

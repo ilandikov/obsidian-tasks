@@ -1,16 +1,20 @@
-import { DEFAULT_MAX_GENERIC_SUGGESTIONS, makeDefaultSuggestionBuilder } from '../Suggestor/Suggestor';
+import {
+    DEFAULT_MAX_GENERIC_SUGGESTIONS,
+    makeDefaultSuggestionBuilder,
+    onlySuggestIfBracketOpen,
+} from '../Suggestor/Suggestor';
 import { DEFAULT_SYMBOLS } from '../TaskSerializer/DefaultTaskSerializer';
 import { DATAVIEW_SYMBOLS } from '../TaskSerializer/DataviewTaskSerializer';
 import { StatusConfiguration } from '../StatusConfiguration';
 import { Status } from '../Status';
 import { DefaultTaskSerializer, type TaskSerializer } from '../TaskSerializer';
 import type { SuggestionBuilder } from '../Suggestor';
+import type { LogOptions } from '../lib/logging';
 import { DataviewTaskSerializer } from '../TaskSerializer/DataviewTaskSerializer';
 import { DebugSettings } from './DebugSettings';
 import { StatusSettings } from './StatusSettings';
 import { Feature } from './Feature';
 import type { FeatureFlag } from './Feature';
-import { GlobalFilter } from './GlobalFilter';
 
 interface SettingsMap {
     [key: string]: string | boolean;
@@ -43,7 +47,13 @@ export const TASK_FORMATS = {
     dataview: {
         displayName: 'Dataview',
         taskSerializer: new DataviewTaskSerializer(),
-        buildSuggestions: makeDefaultSuggestionBuilder(DATAVIEW_SYMBOLS, DEFAULT_MAX_GENERIC_SUGGESTIONS),
+        buildSuggestions: onlySuggestIfBracketOpen(
+            makeDefaultSuggestionBuilder(DATAVIEW_SYMBOLS, DEFAULT_MAX_GENERIC_SUGGESTIONS),
+            [
+                ['(', ')'],
+                ['[', ']'],
+            ],
+        ),
     },
 } as const;
 
@@ -78,11 +88,13 @@ export interface Settings {
     // Tracks the stage of the headings in the settings UI.
     headingOpened: HeadingState;
     debugSettings: DebugSettings;
+
+    loggingOptions: LogOptions;
 }
 
 const defaultSettings: Settings = {
     globalQuery: '',
-    globalFilter: GlobalFilter.empty,
+    globalFilter: '',
     autoInsertGlobalFilter: false,
     removeGlobalFilter: false,
     taskFormat: 'tasksPluginEmoji',
@@ -108,6 +120,22 @@ const defaultSettings: Settings = {
     },
     headingOpened: {},
     debugSettings: new DebugSettings(),
+
+    /*
+    `loggingOptions` is a property in the `Settings` interface that defines the logging options for
+    the application. It is an object that contains a `minLevels` property, which is a map of logger
+    names to their minimum logging levels. This allows the application to control the amount of
+    logging output based on the logger name and the minimum logging level. For example, the logger
+    name `tasks` might have a minimum logging level of `debug`, while the root logger might have a
+    minimum logging level of `info`.
+    */
+    loggingOptions: {
+        minLevels: {
+            '': 'info',
+            tasks: 'info',
+            Query: 'info',
+        },
+    },
 };
 
 let settings: Settings = { ...defaultSettings };
@@ -203,13 +231,4 @@ export const toggleFeature = (internalName: string, enabled: boolean): FeatureFl
  */
 export function getUserSelectedTaskFormat(): TaskFormat {
     return TASK_FORMATS[getSettings().taskFormat];
-}
-
-/**
- * Retrieves the source of the global {@link Query}
- *
- * @exports
- */
-export function getGlobalQuerySource(): { source: string } {
-    return { source: getSettings().globalQuery };
 }

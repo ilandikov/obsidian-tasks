@@ -2,9 +2,9 @@ import type { Task } from '../../Task';
 import { SubstringMatcher } from '../Matchers/SubstringMatcher';
 import { RegexMatcher } from '../Matchers/RegexMatcher';
 import type { IStringMatcher } from '../Matchers/IStringMatcher';
-import { Explanation } from '../Explain/Explanation';
 import type { Comparator } from '../Sorter';
 import type { GrouperFunction } from '../Grouper';
+import { errorMessageForException } from '../../lib/ExceptionTools';
 import { Field } from './Field';
 import type { FilterFunction } from './Filter';
 import { Filter } from './Filter';
@@ -31,11 +31,17 @@ export abstract class TextField extends Field {
         if (filterOperator.includes('include')) {
             matcher = new SubstringMatcher(filterValue);
         } else if (filterOperator.includes('regex')) {
-            matcher = RegexMatcher.validateAndConstruct(filterValue);
+            try {
+                matcher = RegexMatcher.validateAndConstruct(filterValue);
+            } catch (e) {
+                const message =
+                    errorMessageForException('Parsing regular expression', e) + `\n\n${RegexMatcher.helpMessage()}`;
+                return FilterOrErrorMessage.fromError(line, message);
+            }
             if (matcher === null) {
                 return FilterOrErrorMessage.fromError(
                     line,
-                    `cannot parse regex (${this.fieldName()}); check your leading and trailing slashes for your query`,
+                    `Invalid instruction: '${line}'\n\n${RegexMatcher.helpMessage()}`,
                 );
             }
         }
@@ -50,7 +56,7 @@ export abstract class TextField extends Field {
         // and tests if it matches the string filtering rule
         // represented by this object.
         const negate = filterOperator.match(/not/) !== null;
-        const filter = new Filter(line, this.getFilter(matcher, negate), new Explanation(line));
+        const filter = new Filter(line, this.getFilter(matcher, negate), matcher.explanation(line));
         return FilterOrErrorMessage.fromFilter(filter);
     }
 

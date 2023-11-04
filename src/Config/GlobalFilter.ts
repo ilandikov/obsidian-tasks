@@ -62,9 +62,9 @@ export class GlobalFilter {
     public addGlobalFilterToDescriptionDependingOnSettings(description: string): string {
         if (this.shouldAddGlobalFilter(description)) {
             return this.prependTo(description);
-        } else {
-            return description;
         }
+
+        return description;
     }
 
     private shouldAddGlobalFilter(description: string): boolean {

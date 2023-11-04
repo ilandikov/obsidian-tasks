@@ -76,7 +76,7 @@ export class GlobalFilter {
             return false;
         }
 
-        return !!this.autoInsertGlobalFilter;
+        return this.autoInsertGlobalFilter;
     }
 
     public removeAsWordFromDependingOnSettings(description: string): string {

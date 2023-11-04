@@ -6,6 +6,7 @@ import moment from 'moment';
 import type { EditorPosition } from 'obsidian';
 import { getNewCursorPosition, toggleLine } from '../../src/Commands/ToggleDone';
 import { GlobalFilter } from '../../src/Config/GlobalFilter';
+import { updateSettings } from '../../src/Config/Settings';
 import { StatusRegistry } from '../../src/StatusRegistry';
 import { Status } from '../../src/Status';
 import { StatusConfiguration } from '../../src/StatusConfiguration';
@@ -225,6 +226,26 @@ describe('ToggleDone', () => {
             const line3 = toggleLine(line2, 'x.md').text;
             expect(line3).toStrictEqual('- [P] this is a task starting at Pro, not matching the global filter');
         });
+    });
+
+    it('if autoInsertGlobalFilter is true, then a tag global filter is added if absent', () => {
+        GlobalFilter.getInstance().set('#task');
+        updateSettings({ autoInsertGlobalFilter: true });
+
+        testToggleLine('|- ', '- [ ] #task |');
+        testToggleLine('- |', '- [ ] #task |');
+        testToggleLine('- |#task', '- [ ] #task|');
+        testToggleLine('- |global filter should be before this', '- [ ] #task global filter should be before this|');
+    });
+
+    it('if autoInsertGlobalFilter is true, then a non-tag global filter is added if absent', () => {
+        GlobalFilter.getInstance().set('TODO');
+        updateSettings({ autoInsertGlobalFilter: true });
+
+        testToggleLine('|- ', '- [ ] TODO |');
+        testToggleLine('- |', '- [ ] TODO |');
+        testToggleLine('- |TODO', '- [ ] TODO|');
+        testToggleLine('- |global filter should be before this', '- [ ] TODO global filter should be before this|');
     });
 
     todaySpy.mockClear();

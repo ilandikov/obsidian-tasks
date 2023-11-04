@@ -1,4 +1,5 @@
 import { GlobalFilter } from '../src/Config/GlobalFilter';
+import { updateSettings } from '../src/Config/Settings';
 
 describe('Global Filter tests', () => {
     it('getInstance() should return the same object', () => {
@@ -394,5 +395,31 @@ describe('GlobalFilter.prepend() tests', () => {
         // Not fixing this for now in a refactoring PR
         const globalFilter = new GlobalFilter();
         expect(globalFilter.prependTo('description')).toEqual(' description');
+    });
+});
+
+describe('Global Filter tests with Auto Add Global Filter Setting', () => {
+    it('When autoAddGlobalFilter is disabled, Global Filter is not added', () => {
+        // Arrange
+        const globalFilter = new GlobalFilter();
+        globalFilter.set('todo');
+        updateSettings({ autoInsertGlobalFilter: false });
+
+        // Assert
+        expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should not be added here')).toEqual(
+            'Should not be added here',
+        );
+    });
+
+    it('When autoAddGlobalFilter is enabled, Global Filter is added', () => {
+        // Arrange
+        const globalFilter = new GlobalFilter();
+        globalFilter.set('todo');
+        updateSettings({ autoInsertGlobalFilter: true });
+
+        // Assert
+        expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should be added here')).toEqual(
+            'todo Should be added here',
+        );
     });
 });

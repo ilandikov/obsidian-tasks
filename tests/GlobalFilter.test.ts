@@ -411,7 +411,7 @@ describe('Global Filter tests with Auto Add Global Filter Setting', () => {
         );
     });
 
-    it('When autoAddGlobalFilter is enabled, Global Filter is added', () => {
+    it('When autoAddGlobalFilter is enabled, Global Filter is added except it is already in the description', () => {
         // Arrange
         const globalFilter = new GlobalFilter();
         globalFilter.set('todo');
@@ -420,6 +420,9 @@ describe('Global Filter tests with Auto Add Global Filter Setting', () => {
         // Assert
         expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should be added here')).toEqual(
             'todo Should be added here',
+        );
+        expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('todo but not here')).toEqual(
+            'todo but not here',
         );
     });
 });

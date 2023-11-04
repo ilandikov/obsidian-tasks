@@ -68,7 +68,7 @@ export class GlobalFilter {
     }
 
     private shouldAddGlobalFilter(description: string): boolean {
-        return !this.isEmpty() && this.autoInsertGlobalFilter && !this.includedIn(description);
+        return !(this.isEmpty() || !this.autoInsertGlobalFilter || this.includedIn(description));
     }
 
     public removeAsWordFromDependingOnSettings(description: string): string {

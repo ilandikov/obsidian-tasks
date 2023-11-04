@@ -60,21 +60,17 @@ export class GlobalFilter {
     }
 
     static addGlobalFilterToDescriptionDependingOnSettings(description: string): string {
-        if (GlobalFilter.shouldAddGlobalFilter(description)) {
+        if (GlobalFilter.getInstance().shouldAddGlobalFilter(description)) {
             return GlobalFilter.getInstance().prependTo(description);
         } else {
             return description;
         }
     }
 
-    private static shouldAddGlobalFilter(description: string): boolean {
+    private shouldAddGlobalFilter(description: string): boolean {
         const { autoInsertGlobalFilter } = getSettings();
 
-        return (
-            !GlobalFilter.getInstance().isEmpty() &&
-            autoInsertGlobalFilter &&
-            !GlobalFilter.getInstance().includedIn(description)
-        );
+        return !this.isEmpty() && autoInsertGlobalFilter && !this.includedIn(description);
     }
 
     public removeAsWordFromDependingOnSettings(description: string): string {

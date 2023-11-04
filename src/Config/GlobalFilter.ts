@@ -17,6 +17,7 @@ export class GlobalFilter {
     static empty = '';
     private _globalFilter = '';
     private _removeGlobalFilter = false;
+    private _autoInsertGlobalFilter = false;
 
     /**
      * Provides access to the single global instance of GlobalFilter.
@@ -94,6 +95,14 @@ export class GlobalFilter {
      */
     public setRemoveGlobalFilter(removeGlobalFilter: boolean) {
         this._removeGlobalFilter = removeGlobalFilter;
+    }
+
+    get autoInsertGlobalFilter(): boolean {
+        return this._autoInsertGlobalFilter;
+    }
+
+    set autoInsertGlobalFilter(autoInsertGlobalFilter: boolean) {
+        this._autoInsertGlobalFilter = autoInsertGlobalFilter;
     }
 
     /**

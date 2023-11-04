@@ -104,7 +104,7 @@ export const toggleLine = (line: string, path: string): EditorInsertion => {
         } else if (lineItemComponents) {
             const { indentation, listMarker, body } = lineItemComponents;
             // Convert the list item to a checklist item.
-            const newBody = GlobalFilter.addGlobalFilterToDescriptionDependingOnSettings(body);
+            const newBody = GlobalFilter.getInstance().addGlobalFilterToDescriptionDependingOnSettings(body);
 
             const text = `${indentation}${listMarker} [ ] ${newBody}`;
             return { text, moveTo: { ch: text.length } };

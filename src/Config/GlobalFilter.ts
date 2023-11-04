@@ -59,9 +59,9 @@ export class GlobalFilter {
         return this.get() + ' ' + description;
     }
 
-    static addGlobalFilterToDescriptionDependingOnSettings(description: string): string {
-        if (GlobalFilter.getInstance().shouldAddGlobalFilter(description)) {
-            return GlobalFilter.getInstance().prependTo(description);
+    public addGlobalFilterToDescriptionDependingOnSettings(description: string): string {
+        if (this.shouldAddGlobalFilter(description)) {
+            return this.prependTo(description);
         } else {
             return description;
         }

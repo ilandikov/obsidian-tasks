@@ -122,6 +122,7 @@ export class SettingsTab extends PluginSettingTab {
 
                 toggle.setValue(settings.autoInsertGlobalFilter).onChange(async (value) => {
                     updateSettings({ autoInsertGlobalFilter: value });
+                    GlobalFilter.getInstance().autoInsertGlobalFilter = value;
 
                     await this.plugin.saveSettings();
                 });

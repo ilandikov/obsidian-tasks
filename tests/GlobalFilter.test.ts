@@ -1,5 +1,4 @@
 import { GlobalFilter } from '../src/Config/GlobalFilter';
-import { updateSettings } from '../src/Config/Settings';
 
 describe('Global Filter tests', () => {
     it('getInstance() should return the same object', () => {
@@ -403,7 +402,7 @@ describe('Global Filter tests with Auto Add Global Filter Setting', () => {
         // Arrange
         const globalFilter = new GlobalFilter();
         globalFilter.set('todo');
-        updateSettings({ autoInsertGlobalFilter: false });
+        globalFilter.autoInsertGlobalFilter = false;
 
         // Assert
         expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should not be added here')).toEqual(
@@ -415,7 +414,7 @@ describe('Global Filter tests with Auto Add Global Filter Setting', () => {
         // Arrange
         const globalFilter = new GlobalFilter();
         globalFilter.set('todo');
-        updateSettings({ autoInsertGlobalFilter: true });
+        globalFilter.autoInsertGlobalFilter = true;
 
         // Assert
         expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should be added here')).toEqual(

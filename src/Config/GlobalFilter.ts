@@ -1,5 +1,4 @@
 import * as RegExpTools from '../lib/RegExpTools';
-import { getSettings } from './Settings';
 
 /**
  * GlobalFilter has its own data, independent of {@link Settings.globalFilter} value in {@link Settings}.
@@ -69,9 +68,7 @@ export class GlobalFilter {
     }
 
     private shouldAddGlobalFilter(description: string): boolean {
-        const { autoInsertGlobalFilter } = getSettings();
-
-        return !this.isEmpty() && autoInsertGlobalFilter && !this.includedIn(description);
+        return !this.isEmpty() && this.autoInsertGlobalFilter && !this.includedIn(description);
     }
 
     public removeAsWordFromDependingOnSettings(description: string): string {

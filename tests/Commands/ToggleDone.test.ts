@@ -6,7 +6,6 @@ import moment from 'moment';
 import type { EditorPosition } from 'obsidian';
 import { getNewCursorPosition, toggleLine } from '../../src/Commands/ToggleDone';
 import { GlobalFilter } from '../../src/Config/GlobalFilter';
-import { updateSettings } from '../../src/Config/Settings';
 import { StatusRegistry } from '../../src/StatusRegistry';
 import { Status } from '../../src/Status';
 import { StatusConfiguration } from '../../src/StatusConfiguration';
@@ -230,7 +229,7 @@ describe('ToggleDone', () => {
 
     it('if autoInsertGlobalFilter is true, then a tag global filter is added if absent', () => {
         GlobalFilter.getInstance().set('#task');
-        updateSettings({ autoInsertGlobalFilter: true });
+        GlobalFilter.getInstance().autoInsertGlobalFilter = true;
 
         testToggleLine('|- ', '- [ ] #task |');
         testToggleLine('- |', '- [ ] #task |');
@@ -240,7 +239,7 @@ describe('ToggleDone', () => {
 
     it('if autoInsertGlobalFilter is true, then a non-tag global filter is added if absent', () => {
         GlobalFilter.getInstance().set('TODO');
-        updateSettings({ autoInsertGlobalFilter: true });
+        GlobalFilter.getInstance().autoInsertGlobalFilter = true;
 
         testToggleLine('|- ', '- [ ] TODO |');
         testToggleLine('- |', '- [ ] TODO |');

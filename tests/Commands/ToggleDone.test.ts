@@ -9,7 +9,6 @@ import { GlobalFilter } from '../../src/Config/GlobalFilter';
 import { StatusRegistry } from '../../src/StatusRegistry';
 import { Status } from '../../src/Status';
 import { StatusConfiguration } from '../../src/StatusConfiguration';
-import { updateSettings } from '../../src/Config/Settings';
 
 window.moment = moment;
 
@@ -100,150 +99,32 @@ describe('ToggleDone', () => {
         testToggleLine('foo|bar', '- foobar|');
     });
 
-    describe('should add checkbox to hyphen and space', () => {
-        it('if autoInsertGlobalFilter is false, then an empty global filter is not added', () => {
-            GlobalFilter.getInstance().set('');
-            updateSettings({ autoInsertGlobalFilter: false });
+    it('should add checkbox to hyphen and space', () => {
+        testToggleLine('|- ', '- [ ] |');
+        testToggleLine('- |', '- [ ] |');
+        testToggleLine('- |foobar', '- [ ] foobar|');
 
-            testToggleLine('|- ', '- [ ] |');
-            testToggleLine('- |', '- [ ] |');
-            testToggleLine('- |foobar', '- [ ] foobar|');
-        });
+        GlobalFilter.getInstance().set('#task');
 
-        it('if autoInsertGlobalFilter is true, then and empty global filter is not added', () => {
-            GlobalFilter.getInstance().set('');
-            updateSettings({ autoInsertGlobalFilter: true });
-
-            testToggleLine('|- ', '- [ ] |');
-            testToggleLine('- |', '- [ ] |');
-            testToggleLine('- |foobar', '- [ ] foobar|');
-        });
-
-        it('if autoInsertGlobalFilter is false, then a tag global filter is not added', () => {
-            GlobalFilter.getInstance().set('#task');
-            updateSettings({ autoInsertGlobalFilter: false });
-
-            testToggleLine('|- ', '- [ ] |');
-            testToggleLine('- |', '- [ ] |');
-            testToggleLine('- |foobar', '- [ ] foobar|');
-            testToggleLine('- |#task', '- [ ] #task|');
-            testToggleLine('- |write blog post #task', '- [ ] write blog post #task|');
-        });
-
-        it('if autoInsertGlobalFilter is true, then a tag global filter is added if absent', () => {
-            GlobalFilter.getInstance().set('#task');
-            updateSettings({ autoInsertGlobalFilter: true });
-
-            testToggleLine('|- ', '- [ ] #task |');
-            testToggleLine('- |', '- [ ] #task |');
-            testToggleLine('- |foobar', '- [ ] #task foobar|');
-            testToggleLine('- |#task', '- [ ] #task|');
-            testToggleLine('- |write blog post #task', '- [ ] write blog post #task|');
-        });
-
-        it('if autoInsertGlobalFilter is false, then a non-tag global filter is not added', () => {
-            GlobalFilter.getInstance().set('TODO');
-            updateSettings({ autoInsertGlobalFilter: false });
-
-            testToggleLine('|- ', '- [ ] |');
-            testToggleLine('- |', '- [ ] |');
-            testToggleLine('- |foobar', '- [ ] foobar|');
-            testToggleLine('- |TODO foobar', '- [ ] TODO foobar|');
-            testToggleLine('- |write blog post TODO', '- [ ] write blog post TODO|');
-        });
-
-        it('if autoInsertGlobalFilter is true, then a non-tag global filter is added if absent', () => {
-            GlobalFilter.getInstance().set('TODO');
-            updateSettings({ autoInsertGlobalFilter: true });
-
-            testToggleLine('|- ', '- [ ] TODO |');
-            testToggleLine('- |', '- [ ] TODO |');
-            testToggleLine('- |foobar', '- [ ] TODO foobar|');
-            testToggleLine('- |TODO foobar', '- [ ] TODO foobar|');
-            testToggleLine('- |write blog post TODO', '- [ ] write blog post TODO|');
-        });
-
-        it('regex global filter is not broken', () => {
-            // Test a global filter that has special characters from regular expressions
-            // if autoInsertGlobalFilter is false, then global filter is not added
-            GlobalFilter.getInstance().set('a.*b');
-            updateSettings({ autoInsertGlobalFilter: false });
-
-            testToggleLine('|- [ ] a.*b ', '|- [x] a.*b ✅ 2022-09-04');
-            testToggleLine('- [ ] a.*b foobar |', '- [x] a.*b foobar |✅ 2022-09-04');
-
-            GlobalFilter.getInstance().set('a.*b');
-            updateSettings({ autoInsertGlobalFilter: true });
-
-            testToggleLine('|- [ ] a.*b ', '|- [x] a.*b ✅ 2022-09-04');
-            testToggleLine('- [ ] a.*b foobar |', '- [x] a.*b foobar |✅ 2022-09-04');
-        });
+        testToggleLine('|- ', '- [ ] |');
+        testToggleLine('- |', '- [ ] |');
+        testToggleLine('- |foobar', '- [ ] foobar|');
     });
 
-    describe('should complete a task', () => {
-        it('when completing a task without a global filter', () => {
-            testToggleLine('|- [ ] ', '|- [x]  ✅ 2022-09-04');
-            testToggleLine('- [ ] |', '- [x] | ✅ 2022-09-04');
-            testToggleLine('- [ ]| ', '- [x]|  ✅ 2022-09-04');
+    it('should complete a task', () => {
+        testToggleLine('|- [ ] ', '|- [x]  ✅ 2022-09-04');
+        testToggleLine('- [ ] |', '- [x] | ✅ 2022-09-04');
 
-            // Issue #449 - cursor jumped 13 characters to the right on completion
-            testToggleLine('- [ ] I have a |proper description', '- [x] I have a |proper description ✅ 2022-09-04');
-        });
+        // Issue #449 - cursor jumped 13 characters to the right on completion
+        testToggleLine('- [ ] I have a |proper description', '- [x] I have a |proper description ✅ 2022-09-04');
 
-        it('when completing a task with a tag global filter', () => {
-            GlobalFilter.getInstance().set('#task');
+        GlobalFilter.getInstance().set('#task');
 
-            const completesWithTaskGlobalFilter = () => {
-                testToggleLine('|- [ ] ', '|- [x] ');
-                testToggleLine('- [ ] |', '- [x] |');
+        testToggleLine('|- [ ] ', '|- [x] ');
+        testToggleLine('- [ ] |', '- [x] |');
 
-                testToggleLine('|- [ ] #task ', '|- [x] #task ✅ 2022-09-04');
-                testToggleLine('- [ ] #task foobar |', '- [x] #task foobar |✅ 2022-09-04');
-            };
-
-            updateSettings({ autoInsertGlobalFilter: true });
-            completesWithTaskGlobalFilter();
-            updateSettings({ autoInsertGlobalFilter: false });
-            completesWithTaskGlobalFilter();
-
-            // Issue #449 - cursor jumped 13 characters to the right on completion
-            testToggleLine('- [ ] I have a |proper description', '- [x] I have a |proper description');
-        });
-
-        it('when completing a task with a non-tag global filter', () => {
-            GlobalFilter.getInstance().set('TODO');
-
-            const completesWithTodoGlobalFilter = () => {
-                testToggleLine('|- [ ] ', '|- [x] ');
-                testToggleLine('- [ ] |', '- [x] |');
-
-                testToggleLine('|- [ ] TODO ', '|- [x] TODO ✅ 2022-09-04');
-                testToggleLine('- [ ] TODO foobar |', '- [x] TODO foobar |✅ 2022-09-04');
-            };
-
-            updateSettings({ autoInsertGlobalFilter: true });
-            completesWithTodoGlobalFilter();
-            updateSettings({ autoInsertGlobalFilter: false });
-            completesWithTodoGlobalFilter();
-        });
-
-        it('when completing a task with a regex global filter', () => {
-            // Test a global filter that has special characters from regular expressions
-            GlobalFilter.getInstance().set('a.*b');
-
-            const completesWithRegexGlobalFilter = () => {
-                testToggleLine('|- [ ] ', '|- [x] ');
-                testToggleLine('- [ ] |', '- [x] |');
-
-                testToggleLine('|- [ ] a.*b ', '|- [x] a.*b ✅ 2022-09-04');
-                testToggleLine('- [ ] a.*b foobar |', '- [x] a.*b foobar |✅ 2022-09-04');
-            };
-
-            updateSettings({ autoInsertGlobalFilter: true });
-            completesWithRegexGlobalFilter();
-            updateSettings({ autoInsertGlobalFilter: false });
-            completesWithRegexGlobalFilter();
-        });
+        // Issue #449 - cursor jumped 13 characters to the right on completion
+        testToggleLine('- [ ] I have a |proper description', '- [x] I have a |proper description');
     });
 
     it('should un-complete a completed task', () => {

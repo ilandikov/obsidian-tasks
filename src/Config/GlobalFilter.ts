@@ -59,7 +59,7 @@ export class GlobalFilter {
         return this.get() + ' ' + description;
     }
 
-    public addGlobalFilterToDescriptionDependingOnSettings(description: string): string {
+    public addGlobalFilterToDescription(description: string): string {
         if (this.shouldAddGlobalFilter(description)) {
             return this.prependTo(description);
         }

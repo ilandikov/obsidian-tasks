@@ -405,7 +405,7 @@ describe('Global Filter tests with Auto Add Global Filter Setting', () => {
         globalFilter.autoInsertGlobalFilter = false;
 
         // Assert
-        expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should not be added here')).toEqual(
+        expect(globalFilter.addGlobalFilterToDescription('Should not be added here')).toEqual(
             'Should not be added here',
         );
     });
@@ -417,11 +417,7 @@ describe('Global Filter tests with Auto Add Global Filter Setting', () => {
         globalFilter.autoInsertGlobalFilter = true;
 
         // Assert
-        expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('Should be added here')).toEqual(
-            'todo Should be added here',
-        );
-        expect(globalFilter.addGlobalFilterToDescriptionDependingOnSettings('todo but not here')).toEqual(
-            'todo but not here',
-        );
+        expect(globalFilter.addGlobalFilterToDescription('Should be added here')).toEqual('todo Should be added here');
+        expect(globalFilter.addGlobalFilterToDescription('todo but not here')).toEqual('todo but not here');
     });
 });

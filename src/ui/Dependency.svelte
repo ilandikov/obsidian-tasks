@@ -162,12 +162,13 @@
     <ul class="task-dependency-dropdown" bind:this={dropdown} on:mouseleave={() => (searchIndex = null)}>
         {#each searchResults as searchTask, index}
             {@const filepath = displayPath(searchTask.taskLocation.path)}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
             <li
                 on:mousedown={() => addTask(searchTask)}
                 class:selected={search !== null && index === searchIndex}
                 on:mouseenter={() => (searchIndex = index)}
             >
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
                 <div
                     class={filepath ? 'dependency-name-shared' : 'dependency-name'}
                     on:mouseenter={(e) => showDescriptionTooltip(e.currentTarget, descriptionTooltipText(searchTask))}
@@ -175,6 +176,7 @@
                     [{searchTask.status.symbol}] {descriptionAdjustedForDependencySearch(searchTask)}
                 </div>
                 {#if filepath}
+                    <!-- svelte-ignore a11y-no-static-element-interactions -->
                     <div
                         class="dependency-path"
                         on:mouseenter={(e) => showDescriptionTooltip(e.currentTarget, filepath)}
@@ -189,6 +191,7 @@
 {#if editableTask[type].length !== 0}
     <div class="task-dependencies-container results-dependency">
         {#each editableTask[type] as task}
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div
                 class="task-dependency"
                 on:mouseenter={(e) => showDescriptionTooltip(e.currentTarget, descriptionTooltipText(task))}

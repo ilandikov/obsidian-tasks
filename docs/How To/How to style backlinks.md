@@ -47,7 +47,6 @@ We can de-emphasize the text in the backlinks, with [this CSS snippet](https://g
    From https://github.com/obsidian-tasks-group/obsidian-tasks/discussions/622#discussioncomment-2649299
 */
 .tasks-backlink {
-    font-size: 0.7em;
     opacity: 0.6;
     filter: grayscale(60%);
 }

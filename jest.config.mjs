@@ -1,7 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
     verbose: true,
-    preset: 'ts-jest',
     transform: {
         '^.+\\.svelte$': [
             'svelte-jester',
@@ -9,11 +8,29 @@ export default {
                 preprocess: true,
             },
         ],
-        '^.+\\.ts$': 'ts-jest',
+        '^.+\\.ts$': ['ts-jest',{
+            babel: true,
+            tsconfig: 'tsconfig.json',
+            useESM: true,
+            isolatedModules: true,
+        }],
+        '^.+\\.js$': ['babel-jest'],
     },
     moduleFileExtensions: ['js', 'ts', 'svelte'],
     roots: ['<rootDir>/tests'],
     testEnvironment: 'jsdom',
+    // extensionsToTreatAsEsm: ['.ts', '.svelte'],
+    // testEnvironment: 'jsdom',
+    // moduleDirectories: [
+    //     "src",
+    //     "node_modules"
+    // ],
+    // transformIgnorePatterns: [
+    //     '/node_modules/(?!@testing-library/svelte/)',
+    // ],
+    // moduleNameMapper: {
+    //     "^(\\.{1,2}/.*)\\.js$": "$1",
+    // },
 
     // A list of paths to modules that run some code to configure or
     // set up the testing framework before each test.

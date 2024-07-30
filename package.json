@@ -6,6 +6,7 @@
   "engines": {
     "node": "^16.10.0 || >=18.0.0"
   },
+  "type": "module",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "node esbuild.config.mjs production",

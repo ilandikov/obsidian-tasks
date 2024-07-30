@@ -1,5 +1,5 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+export default {
     verbose: true,
     preset: 'ts-jest',
     transform: {

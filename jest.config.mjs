@@ -8,12 +8,15 @@ export default {
                 preprocess: true,
             },
         ],
-        '^.+\\.ts$': ['ts-jest',{
-            babel: true,
-            tsconfig: 'tsconfig.json',
-            useESM: true,
-            isolatedModules: true,
-        }],
+        '^.+\\.ts$': [
+            'ts-jest',
+            {
+                babel: true,
+                tsconfig: 'tsconfig.json',
+                useESM: true,
+                isolatedModules: true,
+            },
+        ],
         '^.+\\.js$': ['babel-jest'],
     },
     moduleFileExtensions: ['js', 'ts', 'svelte'],

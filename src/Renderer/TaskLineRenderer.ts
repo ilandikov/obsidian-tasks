@@ -221,6 +221,24 @@ export class TaskLineRenderer {
                     //     promptForDate(span, task, componentDateField, defaultTaskSaver);
                     // });
 
+                    const dateInput = document.createElement('input');
+                    dateInput.type = 'date';
+                    dateInput.className = 'date-input';
+                    dateInput.style.position = 'absolute';
+                    dateInput.style.display = 'none';
+
+                    span.parentNode?.insertBefore(dateInput, span.nextSibling);
+
+                    span.addEventListener('click', () => {
+                        dateInput.value = span.innerText;
+                        const rect = span.getBoundingClientRect();
+                        dateInput.style.left = `${rect.left}px`;
+                        dateInput.style.top = `${rect.top}px`;
+                        dateInput.style.width = `${rect.width}px`;
+                        dateInput.style.display = 'block';
+                        dateInput.focus();
+                    });
+
                     span.addEventListener('contextmenu', (ev: MouseEvent) => {
                         ev.preventDefault(); // suppress the default context menu
                         ev.stopPropagation(); // suppress further event propagation

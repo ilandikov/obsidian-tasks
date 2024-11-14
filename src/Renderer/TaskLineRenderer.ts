@@ -229,7 +229,7 @@ export class TaskLineRenderer {
                     span.parentNode?.insertBefore(dateInput, span.nextSibling);
 
                     span.addEventListener('click', () => {
-                        dateInput.value = span.innerText;
+                        dateInput.value = (task[component] as Moment).format(TaskRegularExpressions.dateFormat);
                         const rect = span.getBoundingClientRect();
                         dateInput.style.width = `${rect.width}px`;
                         dateInput.style.display = 'block';

@@ -8,6 +8,7 @@ import { replaceTaskWithTasks } from '../Obsidian/File';
 import { StatusRegistry } from '../Statuses/StatusRegistry';
 import { Task } from '../Task/Task';
 import { TaskRegularExpressions } from '../Task/TaskRegularExpressions';
+import { SetTaskDate } from '../ui/EditInstructions/DateInstructions';
 import { StatusMenu } from '../ui/Menus/StatusMenu';
 import type { AllTaskDateFields } from '../DateTime/DateFieldTypes';
 import { defaultTaskSaver } from '../ui/Menus/TaskEditingMenu';
@@ -234,6 +235,13 @@ export class TaskLineRenderer {
                         dateInput.style.width = `${rect.width}px`;
                         dateInput.style.display = 'block';
                         dateInput.focus();
+                    });
+
+                    dateInput.addEventListener('input', () => {
+                        defaultTaskSaver(
+                            task,
+                            new SetTaskDate(componentDateField, new Date(dateInput.value)).apply(task),
+                        );
                     });
 
                     document.addEventListener('mousedown', (event) => {

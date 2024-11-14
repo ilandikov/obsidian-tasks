@@ -239,6 +239,12 @@ export class TaskLineRenderer {
                         dateInput.focus();
                     });
 
+                    document.addEventListener('mousedown', (event) => {
+                        if (event.target !== dateInput && event.target !== span) {
+                            dateInput.style.display = 'none';
+                        }
+                    });
+
                     span.addEventListener('contextmenu', (ev: MouseEvent) => {
                         ev.preventDefault(); // suppress the default context menu
                         ev.stopPropagation(); // suppress further event propagation

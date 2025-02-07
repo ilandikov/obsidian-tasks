@@ -350,6 +350,16 @@ export class QueryResultsRenderer {
             checkbox.classList.add('task-list-item-checkbox');
             checkbox.type = 'checkbox';
 
+            checkbox.addEventListener('click', (event: MouseEvent) => {
+                event.preventDefault();
+                // It is required to stop propagation so that obsidian won't write the file with the
+                // checkbox (un)checked. Obsidian would write after us and overwrite our change.
+                event.stopPropagation();
+
+                // Should be re-rendered as enabled after update in file.
+                checkbox.disabled = true;
+            });
+
             if (listItem.statusCharacter !== ' ') {
                 checkbox.checked = true;
                 li.classList.add('is-checked');

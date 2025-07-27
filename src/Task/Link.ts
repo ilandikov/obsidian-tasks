@@ -92,6 +92,12 @@ export class Link {
             return false;
         }
 
+        // The two filenames, when lowercased without extension are identical
+        // const destinationFilename = destination.filenameWithoutExtension.toLowerCase();
+        // const linkFilename = new TasksFile(this.destination).filenameWithoutExtension.toLowerCase();
+        //
+        // return destinationFilename === linkFilename;
+
         return this.isLinkTo(destination.path);
     }
 }

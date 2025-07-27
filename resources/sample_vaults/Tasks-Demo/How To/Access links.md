@@ -16,29 +16,41 @@ TQ_extra_instructions: |-
 
 ### `task.outlinks`: Task lines containing an outgoing link
 
-```tasks
+```tasksx
 # Task line has a link
 filter by function task.outlinks.length > 0
 limit groups 1
 ```
 
-### `task.file.outlinksInProperties`: Tasks in files whose properties/frontmatter contains a link
+### tasks that link to the query file
 
 ```tasks
+filter by function task.outlinks.some(l => l.isLinkTo(query.file.filenameWithoutExtension))
+```
+
+### tasks that link to the query file2
+
+```tasks
+filter by function task.outlinks.some(l => l.isLinkTo(query.file))
+```
+
+### `task.file.outlinksInProperties`: Tasks in files whose properties/frontmatter contains a link
+
+```tasksx
 filter by function task.file.outlinksInProperties.length > 0
 limit groups 1
 ```
 
 ### `task.file.outlinksInBody`: Tasks in files whose markdown body contains a link
 
-```tasks
+```tasksx
 filter by function task.file.outlinksInBody.length > 0
 limit groups 1
 ```
 
 ### `task.file.outlinks`: Tasks in files whose file contains a link anywhere
 
-```tasks
+```tasksx
 filter by function task.file.outlinks.length > 0
 limit groups 1
 ```
@@ -47,7 +59,7 @@ limit groups 1
 
 ### Group by task outlinks
 
-```tasks
+```tasksx
 # Task line has a link
 filter by function task.outlinks.length > 0
 group by function task.outlinks.map(link => link.markdown).sort().join(' · ')

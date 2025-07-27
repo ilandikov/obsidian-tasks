@@ -299,6 +299,7 @@ describe('visualise links', () => {
 
         output += `## ${file.filePath}\n\n`;
         outlinks.forEach((link) => {
+            output += createRow('link.pathContainingLink', link.pathContainingLink);
             output += createRow('link.originalMarkdown', link.originalMarkdown);
             output += createRow('link.markdown', link.markdown);
             output += createRow('link.destination', link.destination);

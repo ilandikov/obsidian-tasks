@@ -3,7 +3,7 @@ import type { TasksFile } from '../Scripting/TasksFile';
 
 export class Link {
     private readonly rawLink: Reference;
-    private readonly pathContainingLink: string;
+    public readonly pathContainingLink: string;
 
     /**
      * @param {Reference} rawLink - The raw link from Obsidian cache.

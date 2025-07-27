@@ -62,6 +62,10 @@ export class Link {
         return this.rawLink.link;
     }
 
+    public get destinationFilename(): string {
+        return 'apple sauce';
+    }
+
     /**
      * For "[ab](cd.md)", it would return "ab".
      */

@@ -279,14 +279,7 @@ export class QueryResultsRenderer {
         queryRendererParameters: QueryRendererParameters,
         renderedListItems: Set<ListItem>,
     ): Promise<void> {
-        const taskList = createAndAppendElement('ul', content);
-
-        taskList.classList.add('contains-task-list', 'plugin-tasks-query-result');
-        taskList.classList.add(...new TaskLayout(this.query.taskLayoutOptions).generateHiddenClasses());
-        taskList.classList.add(...new QueryLayout(this.query.queryLayoutOptions).getHiddenClasses());
-
-        const groupingAttribute = this.getGroupingAttribute();
-        if (groupingAttribute && groupingAttribute.length > 0) taskList.dataset.taskGroupBy = groupingAttribute;
+        const taskList = this.renderTaskListElement(content);
 
         const taskLineRenderer = this.getTLR(taskList);
 
@@ -324,6 +317,18 @@ export class QueryResultsRenderer {
         }
 
         content.appendChild(taskList);
+    }
+
+    private renderTaskListElement(content: HTMLElement) {
+        const taskList = createAndAppendElement('ul', content);
+
+        taskList.classList.add('contains-task-list', 'plugin-tasks-query-result');
+        taskList.classList.add(...new TaskLayout(this.query.taskLayoutOptions).generateHiddenClasses());
+        taskList.classList.add(...new QueryLayout(this.query.queryLayoutOptions).getHiddenClasses());
+
+        const groupingAttribute = this.getGroupingAttribute();
+        if (groupingAttribute && groupingAttribute.length > 0) taskList.dataset.taskGroupBy = groupingAttribute;
+        return taskList;
     }
 
     private willBeRenderedLater(listItem: ListItem, renderedListItems: Set<ListItem>, listItems: ListItem[]) {

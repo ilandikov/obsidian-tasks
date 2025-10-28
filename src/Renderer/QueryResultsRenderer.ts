@@ -410,13 +410,13 @@ export class QueryResultsRenderer {
 
     private async addTask(
         taskList: HTMLUListElement,
-        taskLineRenderer: TaskLineRenderer,
+        _taskLineRenderer: TaskLineRenderer,
         task: Task,
         taskIndex: number,
         queryRendererParameters: QueryRendererParameters,
     ) {
         const isFilenameUnique = this.isFilenameUnique({ task }, queryRendererParameters.allMarkdownFiles);
-        const listItem = await taskLineRenderer.renderTaskLine({
+        const listItem = await this.taskLineRenderer.renderTaskLine({
             task,
             taskIndex,
             isTaskInQueryFile: this.filePath === task.path,

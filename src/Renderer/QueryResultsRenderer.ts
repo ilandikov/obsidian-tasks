@@ -69,7 +69,6 @@ export class QueryResultsRenderer {
     private readonly renderMarkdown;
     private readonly obsidianComponent: Component | null;
     private readonly obsidianApp: App;
-    private readonly getTLR: () => TaskLineRenderer;
     private readonly taskLineRenderer: TaskLineRenderer;
 
     constructor(
@@ -116,7 +115,6 @@ export class QueryResultsRenderer {
             taskLayoutOptions: this.query.taskLayoutOptions,
             queryLayoutOptions: this.query.queryLayoutOptions,
         });
-        this.getTLR = () => this.taskLineRenderer;
     }
 
     private makeQueryFromSourceAndTasksFile() {
@@ -281,7 +279,7 @@ export class QueryResultsRenderer {
     ): Promise<void> {
         const taskList = this.renderTaskListElement(content);
 
-        const taskLineRenderer = this.getTLR();
+        const taskLineRenderer = this.taskLineRenderer;
 
         for (const [listItemIndex, listItem] of listItems.entries()) {
             if (this.query.queryLayoutOptions.hideTree) {
@@ -368,7 +366,7 @@ export class QueryResultsRenderer {
             return;
         }
 
-        const taskLineRenderer = this.getTLR();
+        const taskLineRenderer = this.taskLineRenderer;
 
         const listItemElement = await this.addTaskOrListItem(
             taskList,

@@ -69,6 +69,7 @@ export class QueryResultsRenderer {
     private readonly renderMarkdown;
     private readonly obsidianComponent: Component | null;
     private readonly obsidianApp: App;
+    private readonly getTLR: (taskList: HTMLUListElement) => TaskLineRenderer;
 
     constructor(
         className: string,
@@ -106,6 +107,16 @@ export class QueryResultsRenderer {
                 this.queryType = 'tasks';
                 break;
         }
+
+        this.getTLR = (taskList: HTMLUListElement) =>
+            new TaskLineRenderer({
+                textRenderer: this.textRenderer,
+                obsidianApp: this.obsidianApp,
+                obsidianComponent: this.obsidianComponent,
+                parentUlElement: taskList,
+                taskLayoutOptions: this.query.taskLayoutOptions,
+                queryLayoutOptions: this.query.queryLayoutOptions,
+            });
     }
 
     private makeQueryFromSourceAndTasksFile() {
@@ -277,14 +288,7 @@ export class QueryResultsRenderer {
         const groupingAttribute = this.getGroupingAttribute();
         if (groupingAttribute && groupingAttribute.length > 0) taskList.dataset.taskGroupBy = groupingAttribute;
 
-        const taskLineRenderer = new TaskLineRenderer({
-            textRenderer: this.textRenderer,
-            obsidianApp: this.obsidianApp,
-            obsidianComponent: this.obsidianComponent,
-            parentUlElement: taskList,
-            taskLayoutOptions: this.query.taskLayoutOptions,
-            queryLayoutOptions: this.query.queryLayoutOptions,
-        });
+        const taskLineRenderer = this.getTLR(taskList);
 
         for (const [listItemIndex, listItem] of listItems.entries()) {
             if (this.query.queryLayoutOptions.hideTree) {

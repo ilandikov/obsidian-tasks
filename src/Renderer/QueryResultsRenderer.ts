@@ -350,7 +350,7 @@ export class QueryResultsRenderer {
 
     private async addTaskOrListItemAndChildren(
         taskList: HTMLUListElement,
-        taskLineRenderer: TaskLineRenderer,
+        _taskLineRenderer: TaskLineRenderer,
         listItem: ListItem,
         taskIndex: number,
         queryRendererParameters: QueryRendererParameters,
@@ -364,6 +364,8 @@ export class QueryResultsRenderer {
         if (this.willBeRenderedLater(listItem, renderedListItems, listItems)) {
             return;
         }
+
+        const taskLineRenderer = this.getTLR(taskList);
 
         const listItemElement = await this.addTaskOrListItem(
             taskList,

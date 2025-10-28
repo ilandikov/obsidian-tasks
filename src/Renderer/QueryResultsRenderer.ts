@@ -70,6 +70,7 @@ export class QueryResultsRenderer {
     private readonly obsidianComponent: Component | null;
     private readonly obsidianApp: App;
     private readonly getTLR: () => TaskLineRenderer;
+    private readonly taskLineRenderer: TaskLineRenderer;
 
     constructor(
         className: string,
@@ -108,14 +109,14 @@ export class QueryResultsRenderer {
                 break;
         }
 
-        this.getTLR = () =>
-            new TaskLineRenderer({
-                textRenderer: this.textRenderer,
-                obsidianApp: this.obsidianApp,
-                obsidianComponent: this.obsidianComponent,
-                taskLayoutOptions: this.query.taskLayoutOptions,
-                queryLayoutOptions: this.query.queryLayoutOptions,
-            });
+        this.taskLineRenderer = new TaskLineRenderer({
+            textRenderer: this.textRenderer,
+            obsidianApp: this.obsidianApp,
+            obsidianComponent: this.obsidianComponent,
+            taskLayoutOptions: this.query.taskLayoutOptions,
+            queryLayoutOptions: this.query.queryLayoutOptions,
+        });
+        this.getTLR = () => this.taskLineRenderer;
     }
 
     private makeQueryFromSourceAndTasksFile() {

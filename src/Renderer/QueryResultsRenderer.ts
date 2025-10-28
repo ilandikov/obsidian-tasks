@@ -69,7 +69,7 @@ export class QueryResultsRenderer {
     private readonly renderMarkdown;
     private readonly obsidianComponent: Component | null;
     private readonly obsidianApp: App;
-    private readonly getTLR: (taskList: HTMLUListElement) => TaskLineRenderer;
+    private readonly getTLR: () => TaskLineRenderer;
 
     constructor(
         className: string,
@@ -108,7 +108,7 @@ export class QueryResultsRenderer {
                 break;
         }
 
-        this.getTLR = (_taskList: HTMLUListElement) =>
+        this.getTLR = () =>
             new TaskLineRenderer({
                 textRenderer: this.textRenderer,
                 obsidianApp: this.obsidianApp,
@@ -280,7 +280,7 @@ export class QueryResultsRenderer {
     ): Promise<void> {
         const taskList = this.renderTaskListElement(content);
 
-        const taskLineRenderer = this.getTLR(taskList);
+        const taskLineRenderer = this.getTLR();
 
         for (const [listItemIndex, listItem] of listItems.entries()) {
             if (this.query.queryLayoutOptions.hideTree) {
@@ -367,7 +367,7 @@ export class QueryResultsRenderer {
             return;
         }
 
-        const taskLineRenderer = this.getTLR(taskList);
+        const taskLineRenderer = this.getTLR();
 
         const listItemElement = await this.addTaskOrListItem(
             taskList,

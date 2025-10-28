@@ -68,8 +68,6 @@ export class TaskLineRenderer {
     private readonly textRenderer: TextRenderer;
     private readonly obsidianApp: App;
     private readonly obsidianComponent: Component | null;
-    // @ts-expect-error
-    private readonly parentUlElement: HTMLElement;
     private readonly taskLayoutOptions: TaskLayoutOptions;
     private readonly queryLayoutOptions: QueryLayoutOptions;
 
@@ -106,21 +104,18 @@ export class TaskLineRenderer {
         textRenderer = TaskLineRenderer.obsidianMarkdownRenderer,
         obsidianApp,
         obsidianComponent,
-        parentUlElement,
         taskLayoutOptions,
         queryLayoutOptions,
     }: {
         textRenderer?: TextRenderer;
         obsidianApp: App;
         obsidianComponent: Component | null;
-        parentUlElement: HTMLElement;
         taskLayoutOptions: TaskLayoutOptions;
         queryLayoutOptions: QueryLayoutOptions;
     }) {
         this.textRenderer = textRenderer;
         this.obsidianApp = obsidianApp;
         this.obsidianComponent = obsidianComponent;
-        this.parentUlElement = parentUlElement;
         this.taskLayoutOptions = taskLayoutOptions;
         this.queryLayoutOptions = queryLayoutOptions;
     }

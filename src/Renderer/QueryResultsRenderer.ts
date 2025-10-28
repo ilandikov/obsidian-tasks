@@ -108,12 +108,11 @@ export class QueryResultsRenderer {
                 break;
         }
 
-        this.getTLR = (taskList: HTMLUListElement) =>
+        this.getTLR = (_taskList: HTMLUListElement) =>
             new TaskLineRenderer({
                 textRenderer: this.textRenderer,
                 obsidianApp: this.obsidianApp,
                 obsidianComponent: this.obsidianComponent,
-                parentUlElement: taskList,
                 taskLayoutOptions: this.query.taskLayoutOptions,
                 queryLayoutOptions: this.query.queryLayoutOptions,
             });

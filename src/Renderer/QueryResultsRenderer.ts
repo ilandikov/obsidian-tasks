@@ -422,6 +422,7 @@ export class QueryResultsRenderer {
             task,
             taskIndex,
             isTaskInQueryFile: this.filePath === task.path,
+            parentUlElement: taskList,
             isFilenameUnique,
         });
 

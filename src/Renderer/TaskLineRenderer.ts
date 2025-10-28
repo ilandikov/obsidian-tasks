@@ -68,6 +68,7 @@ export class TaskLineRenderer {
     private readonly textRenderer: TextRenderer;
     private readonly obsidianApp: App;
     private readonly obsidianComponent: Component | null;
+    // @ts-expect-error
     private readonly parentUlElement: HTMLElement;
     private readonly taskLayoutOptions: TaskLayoutOptions;
     private readonly queryLayoutOptions: QueryLayoutOptions;
@@ -143,14 +144,16 @@ export class TaskLineRenderer {
         task,
         taskIndex,
         isTaskInQueryFile,
+        parentUlElement,
         isFilenameUnique,
     }: {
         task: Task;
         taskIndex: number;
         isTaskInQueryFile: boolean;
+        parentUlElement: HTMLElement;
         isFilenameUnique?: boolean;
     }): Promise<HTMLLIElement> {
-        const li = createAndAppendElement('li', this.parentUlElement);
+        const li = createAndAppendElement('li', parentUlElement);
         li.classList.add('task-list-item', 'plugin-tasks-list-item');
 
         const textSpan = createAndAppendElement('span', li);

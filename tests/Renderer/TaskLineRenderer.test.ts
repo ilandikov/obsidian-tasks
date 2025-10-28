@@ -48,7 +48,12 @@ async function renderListItem(
         taskLayoutOptions: taskLayoutOptions ?? new TaskLayoutOptions(),
         queryLayoutOptions: queryLayoutOptions ?? new QueryLayoutOptions(),
     });
-    return await taskLineRenderer.renderTaskLine({ task: task, taskIndex: 0, isTaskInQueryFile: true });
+    return await taskLineRenderer.renderTaskLine({
+        task: task,
+        taskIndex: 0,
+        parentUlElement: document.createElement('div'),
+        isTaskInQueryFile: true,
+    });
 }
 
 function getTextSpan(listItem: HTMLElement) {
@@ -95,6 +100,7 @@ describe('task line rendering - HTML', () => {
         const listItem = await taskLineRenderer.renderTaskLine({
             task: new TaskBuilder().build(),
             taskIndex: 0,
+            parentUlElement: ulElement,
             isTaskInQueryFile: true,
         });
 

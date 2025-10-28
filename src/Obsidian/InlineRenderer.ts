@@ -141,6 +141,7 @@ export class InlineRenderer {
             const taskElement = await taskLineRenderer.renderTaskLine({
                 task,
                 taskIndex,
+                parentUlElement: element,
                 isTaskInQueryFile: true,
             });
 

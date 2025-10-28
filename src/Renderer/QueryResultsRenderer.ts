@@ -314,7 +314,6 @@ export class QueryResultsRenderer {
                  */
                 await this.addTaskOrListItemAndChildren(
                     taskList,
-                    taskLineRenderer,
                     listItem,
                     listItemIndex,
                     queryRendererParameters,
@@ -350,7 +349,6 @@ export class QueryResultsRenderer {
 
     private async addTaskOrListItemAndChildren(
         taskList: HTMLUListElement,
-        _taskLineRenderer: TaskLineRenderer,
         listItem: ListItem,
         taskIndex: number,
         queryRendererParameters: QueryRendererParameters,

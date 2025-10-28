@@ -279,8 +279,6 @@ export class QueryResultsRenderer {
     ): Promise<void> {
         const taskList = this.renderTaskListElement(content);
 
-        const taskLineRenderer = this.taskLineRenderer;
-
         for (const [listItemIndex, listItem] of listItems.entries()) {
             if (this.query.queryLayoutOptions.hideTree) {
                 /* Old-style rendering of tasks:
@@ -290,7 +288,7 @@ export class QueryResultsRenderer {
                  *      - Tasks are rendered in the order specified in 'sort by' instructions and default sort order.
                  */
                 if (listItem instanceof Task) {
-                    await this.addTask(taskList, taskLineRenderer, listItem, listItemIndex, queryRendererParameters);
+                    await this.addTask(taskList, listItem, listItemIndex, queryRendererParameters);
                 }
             } else {
                 /* New-style rendering of tasks:
@@ -393,7 +391,7 @@ export class QueryResultsRenderer {
         queryRendererParameters: QueryRendererParameters,
     ) {
         if (listItem instanceof Task) {
-            return await this.addTask(taskList, taskLineRenderer, listItem, taskIndex, queryRendererParameters);
+            return await this.addTask(taskList, listItem, taskIndex, queryRendererParameters);
         }
 
         return await this.addListItem(taskList, taskLineRenderer, listItem, taskIndex);
@@ -410,7 +408,6 @@ export class QueryResultsRenderer {
 
     private async addTask(
         taskList: HTMLUListElement,
-        _taskLineRenderer: TaskLineRenderer,
         task: Task,
         taskIndex: number,
         queryRendererParameters: QueryRendererParameters,

@@ -6,16 +6,17 @@ import type { IQuery } from '../IQuery';
 import { QueryLayout } from '../Layout/QueryLayout';
 import { TaskLayout } from '../Layout/TaskLayout';
 import { PerformanceTracker } from '../lib/PerformanceTracker';
-import { explainResults, getQueryForQueryRenderer } from '../Query/QueryRendererHelper';
 import { State } from '../Obsidian/Cache';
 import type { GroupDisplayHeading } from '../Query/Group/GroupDisplayHeading';
 import type { TaskGroups } from '../Query/Group/TaskGroups';
+import { explainResults, getQueryForQueryRenderer } from '../Query/QueryRendererHelper';
 import type { QueryResult } from '../Query/QueryResult';
 import type { TasksFile } from '../Scripting/TasksFile';
 import type { ListItem } from '../Task/ListItem';
 import { Task } from '../Task/Task';
 import { PostponeMenu } from '../ui/Menus/PostponeMenu';
 import { showMenu } from '../ui/Menus/TaskEditingMenu';
+import { HtmlQueryResultsRenderer } from './HtmlQueryResultsRenderer';
 import { TaskLineRenderer, type TextRenderer, createAndAppendElement } from './TaskLineRenderer';
 
 export type BacklinksEventHandler = (ev: MouseEvent, task: Task) => Promise<void>;
@@ -42,7 +43,7 @@ export interface QueryRendererParameters {
  *
  * It handles the construction of task groupings and the application of visual styles.
  */
-export class QueryResultsRenderer {
+export class QueryResultsRenderer extends HtmlQueryResultsRenderer {
     /**
      * The complete text in the instruction block, such as:
      * ```
@@ -85,6 +86,8 @@ export class QueryResultsRenderer {
         obsidianApp: App,
         textRenderer: TextRenderer = TaskLineRenderer.obsidianMarkdownRenderer,
     ) {
+        super();
+
         this.source = source;
         this._tasksFile = tasksFile;
         this.renderMarkdown = renderMarkdown;

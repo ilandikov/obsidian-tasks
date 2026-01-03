@@ -83,9 +83,4 @@ export class TaskModal extends Modal {
         }
         return statusOptions;
     }
-
-    public onClose(): void {
-        const { contentEl } = this;
-        contentEl.empty();
-    }
 }

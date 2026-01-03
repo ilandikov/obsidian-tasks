@@ -47,9 +47,4 @@ export class OptionsModal extends Modal {
             },
         });
     }
-
-    public onClose(): void {
-        const { contentEl } = this;
-        contentEl.empty();
-    }
 }

@@ -78,6 +78,24 @@ export default class TasksPlugin extends Plugin {
         this.registerEditorExtension(newLivePreviewExtension());
         this.registerEditorSuggest(new EditorSuggestor(this.app, getSettings(), this));
         new Commands({ plugin: this });
+
+        this.registerCliHandler(
+            'tasks-plugin:tasks',
+            'List all tasks from the vault that match any global filter',
+            null,
+            () =>
+                this.cache
+                    ?.getTasks()
+                    .map((task) => task.originalMarkdown)
+                    .join('\n') ?? 'No tasks',
+        );
+
+        this.registerCliHandler(
+            'tasks-plugin:query',
+            '',
+            { source: { value: '<instructions>', description: 'Search instructions', required: true } },
+            (cliData) => JSON.stringify(cliData.source),
+        );
     }
 
     async loadTaskStatuses() {

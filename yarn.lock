@@ -5647,10 +5647,10 @@ obsidian-typings@^2.11.1:
   resolved "https://registry.yarnpkg.com/obsidian-typings/-/obsidian-typings-2.11.1.tgz#83285273597734c284488aab3c62a818058cdb1a"
   integrity sha512-TJP03xLrQ49gm9PqnJH7Dtxk0E+DISWIoX1qGdfC8Z0BtupynLKDCD1NNThAC/i55zhn9NTfzT2MdWBlnmCNhg==
 
-obsidian@^1.4.0:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-1.7.2.tgz#2d989288742ae7a65760fd87a953d1ff2a402808"
-  integrity sha512-k9hN9brdknJC+afKr5FQzDRuEFGDKbDjfCazJwpgibwCAoZNYHYV8p/s3mM8I6AsnKrPKNXf8xGuMZ4enWelZQ==
+obsidian@^1.12.2:
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/obsidian/-/obsidian-1.12.3.tgz#5307fe4c36d6b3d554fd0d4e4732f756a7e1d1cd"
+  integrity sha512-HxWqe763dOqzXjnNiHmAJTRERN8KILBSqxDSEqbeSr7W8R8Jxezzbca+nz1LiiqXnMpM8lV2jzAezw3CZ4xNUw==
   dependencies:
     "@types/codemirror" "5.60.8"
     moment "2.29.4"

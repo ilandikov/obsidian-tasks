@@ -9,6 +9,7 @@ module.exports = {
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:import/typescript',
+        'plugin:svelte/prettier',
     ],
     globals: {
         Atomics: 'readonly',
@@ -21,8 +22,9 @@ module.exports = {
         ecmaFeatures: {
             modules: true,
         },
+        extraFileExtensions: ['.svelte'],
     },
-    plugins: ['@typescript-eslint', 'import', 'svelte3'],
+    plugins: ['@typescript-eslint', 'import'],
     rules: {
         'linebreak-style': ['error', 'unix'],
         quotes: ['error', 'single', { avoidEscape: true }],

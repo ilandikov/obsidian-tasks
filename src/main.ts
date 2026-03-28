@@ -1,6 +1,7 @@
 import { Plugin, type Reference, getLinkpath } from 'obsidian';
 
 import type { Task } from 'Task/Task';
+import { taskFromLine } from './Commands/CreateOrEditTaskParser';
 import { i18n, initializeI18n } from './i18n/i18n';
 import { Cache, State } from './Obsidian/Cache';
 import { Commands } from './Commands';
@@ -99,9 +100,36 @@ export default class TasksPlugin extends Plugin {
 
         this.registerCliHandler(
             'tasks-plugin:task',
-            'Show or update a task',
-            { ref: { value: '<path:line>', description: 'Task reference (path:line)', required: true } },
-            (cliData) => JSON.stringify(cliData.ref),
+            'Update a task',
+            {
+                ref: { value: '<path:line>', description: 'Task reference (path:line)', required: true },
+                toggle: { description: 'Toggle task status' },
+            },
+            async ({ ref }) => {
+                const [path, lineNumber] = ref.split(':');
+
+                const tFile = this.app.vault.getFileByPath(path);
+                if (!tFile) {
+                    throw new Error(`Cannot find file ${ref}`);
+                }
+
+                const fileContent = await this.app.vault.read(tFile);
+                const lines = fileContent.split('\n');
+                const number = Number(lineNumber) - 1;
+                const line = lines[number];
+
+                const task = taskFromLine({ line, path });
+
+                const newTasks = task.toggle();
+                const newTaskLines = newTasks.map((task) => task.toFileLineString());
+
+                lines.splice(number, 1, ...newTaskLines);
+
+                const newFileContent = lines.join('\n');
+                await this.app.vault.modify(tFile, newFileContent);
+
+                return ['Before', line, '', 'After', ...newTaskLines].join('\n');
+            },
         );
     }
 

@@ -96,6 +96,13 @@ export default class TasksPlugin extends Plugin {
             { source: { value: '<instructions>', description: 'Search instructions', required: true } },
             (cliData) => JSON.stringify(cliData.source),
         );
+
+        this.registerCliHandler(
+            'tasks-plugin:task',
+            'Show or update a task',
+            { ref: { value: '<path:line>', description: 'Task reference (path:line)', required: true } },
+            (cliData) => JSON.stringify(cliData.ref),
+        );
     }
 
     async loadTaskStatuses() {

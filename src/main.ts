@@ -10,6 +10,7 @@ import { TasksEvents } from './Obsidian/TasksEvents';
 import { initializeFile } from './Obsidian/File';
 import { InlineRenderer } from './Obsidian/InlineRenderer';
 import { newLivePreviewExtension } from './Obsidian/LivePreviewExtension';
+import { Query } from './Query/Query';
 import { QueryRenderer } from './Renderer/QueryRenderer';
 import { getSettings, updateSettings } from './Config/Settings';
 import { SettingsTab } from './Config/SettingsTab';
@@ -95,7 +96,11 @@ export default class TasksPlugin extends Plugin {
             'tasks-plugin:query',
             '',
             { source: { value: '<instructions>', description: 'Search instructions', required: true } },
-            (cliData) => JSON.stringify(cliData.source),
+            (cliData) => {
+                const source = cliData.source;
+                const queryResult = new Query(source).applyQueryToTasks(this.getTasks());
+                return queryResult.asMarkdown();
+            },
         );
 
         this.registerCliHandler(

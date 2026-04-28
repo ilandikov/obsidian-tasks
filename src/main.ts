@@ -5,6 +5,7 @@ import { i18n, initializeI18n } from './i18n/i18n';
 import { Cache, State } from './Obsidian/Cache';
 import { Commands } from './Commands';
 import { GlobalQuery } from './Config/GlobalQuery';
+import { registerCLIHandlers } from './Obsidian/CLI';
 import { TasksEvents } from './Obsidian/TasksEvents';
 import { initializeFile } from './Obsidian/File';
 import { InlineRenderer } from './Obsidian/InlineRenderer';
@@ -78,6 +79,8 @@ export default class TasksPlugin extends Plugin {
         this.registerEditorExtension(newLivePreviewExtension());
         this.registerEditorSuggest(new EditorSuggestor(this.app, getSettings(), this));
         new Commands({ plugin: this });
+
+        registerCLIHandlers(this);
     }
 
     async loadTaskStatuses() {

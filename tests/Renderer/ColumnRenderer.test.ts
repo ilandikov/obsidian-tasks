@@ -50,7 +50,7 @@ class FakeListRenderer extends HtmlQueryResultsRenderer {
 }
 
 describe('column rendering', () => {
-    it('should render task count if no tasks were found', async () => {
+    it('should render task list without columns', async () => {
         const source = '';
         const tasks: Task[] = [];
         const queryResult = new Query(source).applyQueryToTasks(tasks);

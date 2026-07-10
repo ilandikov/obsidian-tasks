@@ -4,33 +4,15 @@ import { GlobalQuery } from '../../src/Config/GlobalQuery';
 import { resetSettings, updateSettings } from '../../src/Config/Settings';
 import { State } from '../../src/Obsidian/Cache';
 import type { Query } from '../../src/Query/Query';
-import { getQueryForQueryRenderer } from '../../src/Query/QueryRendererHelper';
-import { HtmlQueryResultsRenderer } from '../../src/Renderer/HtmlQueryResultsRenderer';
+import type { HtmlQueryResultsRenderer } from '../../src/Renderer/HtmlQueryResultsRenderer';
 import type { TasksFile } from '../../src/Scripting/TasksFile';
 import type { Task } from '../../src/Task/Task';
-import { mockApp } from '../__mocks__/obsidian';
 import { readTasksFromSimulatedFile } from '../Obsidian/SimulatedFile';
 import { TaskBuilder } from '../TestingTools/TaskBuilder';
 import { createTestTasksFile } from '../TestingTools/TasksFileHelpers';
-import { makeHtmlQueryRendererParameters, mockHTMLRenderer, verifyRenderedTasks } from './RenderingTestHelpers';
+import { makeHtmlRenderer, verifyRenderedTasks } from './RenderingTestHelpers';
 
 window.moment = moment;
-
-function makeHtmlRenderer(source: string, tasksFile: TasksFile, allTasks: Task[]) {
-    const query = getQueryForQueryRenderer(source, GlobalQuery.getInstance(), tasksFile);
-
-    const renderer = new HtmlQueryResultsRenderer(
-        () => Promise.resolve(),
-        null,
-        mockApp,
-        mockHTMLRenderer,
-        makeHtmlQueryRendererParameters(allTasks),
-        source,
-        tasksFile,
-        query,
-    );
-    return { query, renderer };
-}
 
 async function verifyRenderedHtml(allTasks: Task[], source: string, state: State = State.Warm) {
     const tasksFile = createTestTasksFile('query.md');

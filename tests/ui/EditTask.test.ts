@@ -5,7 +5,6 @@ import type { EditModalShowSettings } from 'Config/EditModalShowSettings';
 import { GlobalFilter } from 'Config/GlobalFilter';
 import { getSettings, resetSettings, updateSettings } from 'Config/Settings';
 import { DateFallback } from 'DateTime/DateFallback';
-import type { App } from 'obsidian';
 import { StatusRegistry } from 'Statuses/StatusRegistry';
 import type { Task } from 'Task/Task';
 import EditTask from 'ui/EditTask.svelte';
@@ -14,6 +13,7 @@ import { verifyWithFileExtension } from '../TestingTools/ApprovalTestHelpers';
 import { verifyAllCombinations3Async } from '../TestingTools/CombinationApprovalsAsync';
 import { prettifyHTML } from '../TestingTools/HTMLHelpers';
 import { TaskBuilder } from '../TestingTools/TaskBuilder';
+import { createMockEditorApp } from '../TestingTools/MockEditorApp';
 import {
     editInputElement,
     getAndCheckApplyButton,
@@ -61,7 +61,7 @@ function renderAndCheckModal(task: Task, onSubmit: (updatedTasks: Task[]) => voi
         statusOptions: StatusRegistry.getInstance().registeredStatuses,
         onSubmit,
         allTasks,
-        app: {} as App,
+        app: createMockEditorApp(),
     });
     const { container } = result;
     expect(() => container).toBeTruthy();

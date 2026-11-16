@@ -1,6 +1,9 @@
+import path from 'node:path';
 import type { App, CachedMetadata, Debouncer, Reference, TFile, Vault } from 'obsidian';
+import { NormalizedPathUtils } from 'typedoc/dist/types/utils-common';
 import type { SimulatedFile } from '../Obsidian/SimulatedFile';
 import { MockDataLoader } from '../TestingTools/MockDataLoader';
+import basename = NormalizedPathUtils.basename;
 
 export {};
 
@@ -10,6 +13,13 @@ export {};
  * not a lot to mock in particular.
  */
 export const mockApp = {} as unknown as App;
+
+// Minimal hotkey scope for embeddable editor construction.
+export class Scope {
+    constructor(_parent?: Scope) {}
+
+    register(_modifiers: string[], _key: string, _callback: (...args: unknown[]) => boolean) {}
+}
 
 /**
  * Creates a minimal Obsidian TFile for tests that only need file metadata.

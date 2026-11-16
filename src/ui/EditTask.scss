@@ -29,11 +29,23 @@
 }
 
 .tasks-modal-description-section {
-    textarea {
+    .outer-div {
         width: 100%;
         min-height: calc(var(--input-height) * 2);
+        height: calc(var(--input-height) * 2);
         resize: vertical;
+        overflow: auto;
         margin-top: 8px;
+        border-radius: var(--radius-m);
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--background-modifier-border);
+        padding: 2px 3px;
+    }
+
+    .outer-div:focus-within {
+        box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+        border-color: var(--background-modifier-border-focus);
     }
 }
 

@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { App } from 'obsidian';
     import { onMount } from 'svelte';
+    import { EmbeddableMarkdownEditor } from './EmbeddableMarkdownEditor';
     import { defaultEditModalShowSettings } from '../Config/EditModalShowSettings';
 
     import { TASK_FORMATS, getSettings } from '../Config/Settings';
@@ -10,7 +11,7 @@
     import DateEditor from './DateEditor.svelte';
     import Dependency from './Dependency.svelte';
     import { EditableTask } from './EditableTask';
-    import { focusOnceClearOfKeyboard, labelContentWithAccessKey } from './EditTaskHelpers';
+    import { labelContentWithAccessKey } from './EditTaskHelpers';
     import PriorityEditor from './PriorityEditor.svelte';
     import RecurrenceEditor from './RecurrenceEditor.svelte';
     import StatusEditor from './StatusEditor.svelte';
@@ -32,7 +33,8 @@
         doneDateSymbol,
     } = TASK_FORMATS.tasksPluginEmoji.taskSerializer.symbols;
 
-    let descriptionInput: HTMLTextAreaElement;
+    let mdEditorElement: HTMLDivElement;
+    let mdEditor: EmbeddableMarkdownEditor;
 
     let editableTask = EditableTask.fromTask(task, allTasks);
 
@@ -74,13 +76,44 @@
         withAccessKeys = provideAccessKeys;
 
         mountComplete = true;
+        _initEditor().then(() => _focusEditor());
 
         // Put the cursor in the Description field, ready to type. On a phone this has to wait for
         // the modal to finish sliding up first, or the keyboard drags the form down with it
-        focusOnceClearOfKeyboard(descriptionInput);
+        // TODO reinstate this or write alternative or prove that this is not needed
+        // focusOnceClearOfKeyboard(descriptionInput);
     });
 
+    const _initEditor = async () => {
+        mdEditor = new EmbeddableMarkdownEditor(app, mdEditorElement, {
+            value: `${editableTask.description}`,
+            placeholder: 'Take out the trash',
+            onEnter: () => {
+                _onSubmit();
+                return true;
+            },
+            onChange: (update) => {
+                if (!update.docChanged) return;
+                // NOTE: this causes undo to break because it replaces the last change
+                // but also causes a change thereby popping and pushing an event.
+                _removeLinebreaksFromDescription();
+                // _preventHeadingFormatting();
+                return true;
+            },
+            onEscape: () => _onClose(),
+        });
+        // set the cursor to the final character on intial load
+        mdEditor.editor?.setCursor(mdEditor.get().length);
+    };
+
+    const _focusEditor = () => {
+        setTimeout(() => {
+            mdEditorElement.focus();
+        }, 0);
+    };
+
     const _onClose = () => {
+        mdEditor.destroy();
         onSubmit([]);
     };
 
@@ -91,16 +124,29 @@
         }
     };
 
-    // this is called, when text is pasted or dropped into
-    // the description field, to remove any linebreaks
+    // Prevents newlines
+    // If a newline is detected, we remove it by regex search and replace
     const _removeLinebreaksFromDescription = () => {
-        // wrapped into a timer to run after the paste/drop event
-        setTimeout(() => {
-            editableTask.description = editableTask.description.replace(/[\r\n]+/g, ' ');
-        }, 0);
+        // detect whether there are any break line characters
+        if (mdEditor.get().match(/[\r\n]+/g)) {
+            // wrapped into a timer to run after a paste/drop/insert
+            setTimeout(() => {
+                mdEditor.set(mdEditor.get().replace(/[\r\n]+/g, ' '), false);
+            }, 0);
+        }
     };
 
+    // Prevents heading rendering by detecting if single line content starts with any valid markdown heading followed by a space. If so, removes the space.
+    // Visually this looks like you are not allowed to type a space after a `#`.
+    // const _preventHeadingFormatting = () => {
+    //     // regex matches between 1 and 6 leading `#` symbols followed by a space
+    //     if (mdEditor.get().match(/^(#{1,6})\s/)) {
+    //         mdEditor.set(mdEditor.get().replace(/^(#{1,6})\s/, '$1'), false);
+    //     }
+    // };
+
     const _onSubmit = async () => {
+        editableTask.description = mdEditor.get();
         const newTasks = await editableTask.applyEdits(task, allTasks);
         onSubmit(newTasks);
     };
@@ -146,16 +192,7 @@ Availability of access keys:
     <section class="tasks-modal-description-section">
         <label for="description">{@html labelContentWithAccessKey('Description', accesskey('t'))}</label>
         <!-- svelte-ignore a11y-accesskey -->
-        <textarea
-            bind:value={editableTask.description}
-            bind:this={descriptionInput}
-            id="description"
-            class="tasks-modal-description"
-            placeholder="Take out the trash"
-            accesskey={accesskey('t')}
-            on:keydown={_onDescriptionKeyDown}
-            on:paste={_removeLinebreaksFromDescription}
-            on:drop={_removeLinebreaksFromDescription}></textarea>
+        <div class="outer-div" bind:this={mdEditorElement} accesskey={accesskey('t')}></div>
     </section>
 
     <!--

@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { App } from 'obsidian';
     import { onMount } from 'svelte';
-    import { EmbeddableMarkdownEditor } from './EmbeddableMarkdownEditor';
+    import { createEditorClass, type EmbeddableMarkdownEditor } from './EmbeddableMarkdownEditor';
     import { defaultEditModalShowSettings } from '../Config/EditModalShowSettings';
 
     import { TASK_FORMATS, getSettings } from '../Config/Settings';
@@ -85,7 +85,8 @@
     });
 
     const _initEditor = async () => {
-        mdEditor = new EmbeddableMarkdownEditor(app, mdEditorElement, {
+        const Editor = createEditorClass(app);
+        mdEditor = new Editor(app, mdEditorElement, {
             value: `${editableTask.description}`,
             placeholder: 'Take out the trash',
             onEnter: () => {

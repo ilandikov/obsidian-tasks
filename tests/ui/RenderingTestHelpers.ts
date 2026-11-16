@@ -15,8 +15,10 @@ export function getAndCheckRenderedElement<T>(container: HTMLElement, elementId:
     return element;
 }
 
-export function getAndCheckRenderedDescriptionElement(container: HTMLElement): HTMLInputElement {
-    return getAndCheckRenderedElement<HTMLInputElement>(container, 'description');
+export function getAndCheckRenderedDescriptionElement(container: HTMLElement): HTMLElement {
+    const element = container.querySelector<HTMLElement>('.tasks-modal-description-section [contenteditable="true"]');
+    expect(element).not.toBeNull();
+    return element!;
 }
 
 export function getAndCheckApplyButton(result: RenderResult<EditTask>): HTMLButtonElement {

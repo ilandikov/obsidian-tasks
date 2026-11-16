@@ -95,6 +95,7 @@
             },
             onChange: (update) => {
                 if (!update.docChanged) return;
+                editableTask.description = mdEditor.get();
                 // NOTE: this causes undo to break because it replaces the last change
                 // but also causes a change thereby popping and pushing an event.
                 _removeLinebreaksFromDescription();
@@ -109,7 +110,7 @@
 
     const _focusEditor = () => {
         setTimeout(() => {
-            mdEditorElement.focus();
+            mdEditorElement?.focus();
         }, 0);
     };
 

@@ -1,9 +1,6 @@
-import path from 'node:path';
 import type { App, CachedMetadata, Debouncer, Reference, TFile, Vault } from 'obsidian';
-import { NormalizedPathUtils } from 'typedoc/dist/types/utils-common';
 import type { SimulatedFile } from '../Obsidian/SimulatedFile';
 import { MockDataLoader } from '../TestingTools/MockDataLoader';
-import basename = NormalizedPathUtils.basename;
 
 export {};
 

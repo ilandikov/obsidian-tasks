@@ -104,12 +104,14 @@ async function editTaskLine(line: string, newDescription: string | undefined) {
     const description = getAndCheckRenderedDescriptionElement(container);
     const submit = getAndCheckApplyButton(result);
 
-    let adjustedNewDescription = newDescription ? newDescription : description!.value;
+    let adjustedNewDescription = newDescription ? newDescription : description.textContent;
     if (!adjustedNewDescription) {
         adjustedNewDescription = 'simulate user typing text in to empty description field';
     }
 
-    return await editInputElementAndSubmit(description, adjustedNewDescription, submit, waitForClose);
+    await fireEvent.input(description, { target: { textContent: adjustedNewDescription } });
+    submit.click();
+    return await waitForClose;
 }
 
 /**
@@ -205,7 +207,9 @@ describe('Task rendering', () => {
 
     function testDescriptionRender(taskDescription: string, expectedDescription: string) {
         const line = convertDescriptionToTaskLine(taskDescription);
-        testElementRender(line, 'description', expectedDescription);
+        const task = taskFromLine({ line, path: '' });
+        const { container } = renderAndCheckModal(task, () => {});
+        expect(getAndCheckRenderedDescriptionElement(container).textContent).toEqual(expectedDescription);
     }
 
     it('should display task description (empty Global Filter)', () => {

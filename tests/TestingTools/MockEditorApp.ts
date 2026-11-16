@@ -1,4 +1,5 @@
 import type { App } from 'obsidian';
+import type { ViewUpdate } from '@codemirror/view';
 
 /** Minimal editor host for modal tests; it does not emulate CodeMirror or Markdown rendering. */
 export function createMockEditorApp(): App {
@@ -13,6 +14,10 @@ export function createMockEditorApp(): App {
             public owner: object,
         ) {
             this.editorEl = containerEl.appendChild(this.activeCM.contentDOM);
+            this.editorEl.setAttribute('contenteditable', 'true');
+            this.editorEl.addEventListener('input', () => {
+                this.onUpdate({ docChanged: true } as ViewUpdate, true);
+            });
         }
 
         activeCM = {
@@ -37,6 +42,8 @@ export function createMockEditorApp(): App {
         register(cleanup: () => void) {
             this.cleanups.push(cleanup);
         }
+
+        onUpdate(_update: ViewUpdate, _changed: boolean) {}
 
         unload() {
             this._loaded = false;

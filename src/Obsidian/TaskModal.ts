@@ -74,6 +74,7 @@ export class TaskModal extends Modal {
                 statusOptions: statusOptions,
                 onSubmit: this.onSubmit,
                 allTasks: this.allTasks,
+                app: this.app,
             },
         });
     }

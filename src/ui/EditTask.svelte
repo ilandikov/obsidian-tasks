@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { App } from 'obsidian';
     import { onMount } from 'svelte';
     import { defaultEditModalShowSettings } from '../Config/EditModalShowSettings';
 
@@ -19,6 +20,7 @@
     export let onSubmit: (updatedTasks: Task[]) => void | Promise<void>;
     export let statusOptions: Status[];
     export let allTasks: Task[];
+    export let app: App;
 
     const {
         // NEW_TASK_FIELD_EDIT_REQUIRED

@@ -150,6 +150,7 @@
     const _onSubmit = async () => {
         editableTask.description = mdEditor.get();
         const newTasks = await editableTask.applyEdits(task, allTasks);
+        mdEditor.destroy()
         onSubmit(newTasks);
     };
 </script>
